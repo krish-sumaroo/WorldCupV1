@@ -1,4 +1,6 @@
-package com.example.worldcupv1;
+package com.competition.worldcupv1;
+
+import com.example.worldcupv1.R;
 
 import android.os.Bundle;
 import android.app.Activity;

@@ -4,12 +4,12 @@ import com.competition.worldcupv1.databasehelper.DatabaseHelper;
 
 import android.content.Context;
 
-public class ServerHelper {
+public class WebServiceHelper {
 	
 	private DatabaseHelper dbHelper;
 	private Context context;
 
-	public ServerHelper(Context context) {
+	public WebServiceHelper(Context context) {
 		this.context = context;
 	}
 

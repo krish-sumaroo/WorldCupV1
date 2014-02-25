@@ -233,4 +233,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return mCursor;		
 	}
 	
+	public Cursor executeQuery(String sql, String[] selectionArgs){
+		Cursor mCursor = db.rawQuery(sql.toString(), selectionArgs);
+		if (mCursor != null) {
+			mCursor.moveToFirst();
+		}
+		return mCursor;
+	}
+
+	public void executeSql(String sql) {
+		db.execSQL(sql);		
+	}
+	
 }

@@ -1,6 +1,6 @@
 package com.competition.worldcupv1.utils;
 
-import com.example.worldcupv1.R;
+import com.competition.worldcupv1.R;
 
 public class CountryFlagHelper {
 	public static int getFlagId(String countryCode){

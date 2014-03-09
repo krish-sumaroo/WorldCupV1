@@ -29,13 +29,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public final String TEAM_TEAMID = "_id";
 	public final String TEAM_TEAMNAME = "team_name";
 	public final String TEAM_COUNTRYCODE = "country_code";
-	public final String TEAM_GROUP = "group";
+	public final String TEAM_COACH = "coach";
 	
 	// Table player column
 	public final String PLAYER_PLAYERID = "_id";
 	public final String PLAYER_PLAYERNAME = "player_name";
 	public final String PLAYER_TEAMID = "team_id";
 	public final String PLAYER_POSITION = "position";
+	public final String PLAYER_NUMBER = "number";
 		
 	// Table match column
 	public final String MATCH_MATCHID = "_id";
@@ -55,6 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	
 	}
 
 	@Override
@@ -87,8 +89,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		qb.append(" CREATE TABLE IF NOT EXISTS team ( ");
 		qb.append("  	_id integer primary key autoincrement, ");
 		qb.append("  	team_name text not null,");
-		qb.append("  	country_code text not null), ");
-		qb.append("  	group text); ");
+		qb.append("  	country_code text not null, ");
+		qb.append("  	coach text); ");
 		db.execSQL(qb.toString());
 	}
 		
@@ -100,6 +102,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		qb.append(" 	player_name text not null, ");
 		qb.append(" 	team_id integer, ");
 		qb.append(" 	position text not null, ");
+		qb.append(" 	number integer, ");
 		qb.append(" 	FOREIGN KEY(team_id) REFERENCES team(_id) " );
 		qb.append(" );");
 		db.execSQL(qb.toString());
@@ -123,21 +126,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	// ******************************** create content values ***********************
 	
-	private ContentValues createTeamContentValues(long _id, String team_name, String country_code, String group) {
+	private ContentValues createTeamContentValues(long _id, String team_name, String country_code, String coach) {
 		ContentValues values = new ContentValues();
 		values.put(PLAYER_PLAYERID, _id);
 		values.put(TEAM_TEAMNAME, team_name);
 		values.put(TEAM_COUNTRYCODE, country_code);
-		values.put(TEAM_GROUP, group);
+		values.put(TEAM_COACH, coach);
 		return values;
 	}
 		
-	private ContentValues createPlayerContentValues(long _id, String player_name, long team_id, String position) {
+	private ContentValues createPlayerContentValues(long _id, String player_name, long team_id, String position, long number) {
 		ContentValues values = new ContentValues();
 		values.put(TEAM_TEAMID, _id);
 		values.put(PLAYER_PLAYERNAME, player_name);
 		values.put(PLAYER_TEAMID, team_id);
 		values.put(PLAYER_POSITION, position);
+		values.put(PLAYER_NUMBER, number);
 		return values;
 	}
 	
@@ -154,13 +158,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	// ****************************** insert - table values ***********************
 	
-	public long createTeam(long _id, String team_name, String country_code, String group) {
-		ContentValues values = createTeamContentValues( _id,  team_name,  country_code,  group);
+	public long createTeam(long _id, String team_name, String country_code, String coach) {
+		ContentValues values = createTeamContentValues( _id,  team_name,  country_code,  coach);
 		return db.insert(DB_TABLE_TEAM, null, values);
 	}
 	
-	public long createPlayer(long _id, String player_name, long team_id, String position) {
-		ContentValues values = createPlayerContentValues(  _id,  player_name,  team_id,  position);
+	public long createPlayer(long _id, String player_name, long team_id, String position, long number) {
+		ContentValues values = createPlayerContentValues(  _id,  player_name,  team_id,  position, number);
 		return db.insert(DB_TABLE_PLAYER, null, values);
 	}
 	
@@ -243,6 +247,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	public void executeSql(String sql) {
 		db.execSQL(sql);		
+	}
+	
+	public boolean isTableMatchFill(){
+        String query = "SELECT  * FROM " + DB_TABLE_TEAM;
+ 
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        
+        int count = cursor.getCount();
+        db.close();
+        
+        if(count>0){
+        	return true;
+        }
+		return false;
 	}
 	
 }

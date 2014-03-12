@@ -12,14 +12,15 @@ public class TeamDTO implements Serializable{
 	private Integer teamId;
 	private String teamName;
 	private String countryCode;
-	private String group;
+	private String coach;
 	
 	public TeamDTO (){}
 	
-	public TeamDTO(String teamName, String countryCode) {
+	public TeamDTO(String teamName, String countryCode, String coach) {
         super();
         this.teamName = teamName;
         this.countryCode = countryCode;
+        this.coach = coach;
     }
 	
 	public Integer getTeamId() {
@@ -40,13 +41,12 @@ public class TeamDTO implements Serializable{
 	public void setCountryCode(String countryCode) {
 		this.countryCode = countryCode;
 	}
-
-	public String getGroup() {
-		return group;
+	public String getCoach() {
+		return coach;
 	}
 
-	public void setGroup(String group) {
-		this.group = group;
+	public void setCoach(String coach) {
+		this.coach = coach;
 	}
 	
 }

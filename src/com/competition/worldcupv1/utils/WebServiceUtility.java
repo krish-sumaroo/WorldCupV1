@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 public class WebServiceUtility {
 	private static final String webServiceURL = "http://10.0.2.2/WorldCup_web/index.php/resource/";
+	//private static final String webServiceURL = "http://192.168.1.4/WorldCup_web/index.php/resource/";
 	
 	public JSONArray  extractList(String listUrl) throws ClientProtocolException, IOException, JSONException {
 		JSONArray jArray = null;
@@ -38,11 +39,14 @@ public class WebServiceUtility {
 		HttpClient httpclient = new DefaultHttpClient(); 
 		String url = webServiceURL+urlMethod;
 		JSONObject jObject = null;
+		HttpPost httppost  = null;
+		ResponseHandler<String> responseHandler = null;
+		String responseBody ="";
 		try{
-			HttpPost httppost = new HttpPost(url);
+			httppost = new HttpPost(url);
 	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairsList));        	
-	        ResponseHandler<String> responseHandler = new BasicResponseHandler();
-	        String responseBody = httpclient.execute(httppost, responseHandler);          
+	        responseHandler = new BasicResponseHandler();
+	        responseBody = httpclient.execute(httppost, responseHandler);          
 	        jObject = new JSONObject(responseBody);
 		}
 		finally{

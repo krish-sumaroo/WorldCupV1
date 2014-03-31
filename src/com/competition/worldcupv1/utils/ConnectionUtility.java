@@ -42,7 +42,7 @@ public class ConnectionUtility {
 			public void onClick(DialogInterface dialog, int arg1) {
 				dialog.cancel();
 				utilityListener.exitApplication(true);	
-				//dialog.dismiss();
+				dialog.dismiss();
 			}    		
     	});
 

@@ -1,5 +1,4 @@
 package com.competition.worldcupv1.webServicehelper;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +16,14 @@ import android.util.Log;
 import com.competition.worldcupv1.databasehelper.DatabaseHelper;
 import com.competition.worldcupv1.dto.FriendDTO;
 import com.competition.worldcupv1.dto.TeamDTO;
+import com.competition.worldcupv1.dto.UserDTO;
 import com.competition.worldcupv1.utils.WebServiceUtility;
 
 public class WebServiceHelper {	
 	private DatabaseHelper dbHelper;
 	private Context context;
 	private static final String webServiceURL = "http://10.0.2.2/WorldCup_web/index.php/resource/";
+	//private static final String webServiceURL = "http://192.168.1.4/WorldCup_web/index.php/resource/";
 
 //	public WebServiceHelper(Context context) {
 //		this.context = context;
@@ -195,16 +196,17 @@ public class WebServiceHelper {
 		}
 	}
 	
+	
 	//create new user
-	public String createUser(String name, String uid, String country, Context context) throws ClientProtocolException, IOException, JSONException{
+	public String createUser(Context context, UserDTO user) throws ClientProtocolException, IOException, JSONException{
 		String url = "crUser";
 		String result="";
       
     	// Add data
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
-        nameValuePairs.add(new BasicNameValuePair("name", name));
-        nameValuePairs.add(new BasicNameValuePair("uid", uid));
-        nameValuePairs.add(new BasicNameValuePair("country", country));
+        nameValuePairs.add(new BasicNameValuePair("name", user.getName()));
+        nameValuePairs.add(new BasicNameValuePair("uid", user.getUid()));
+        nameValuePairs.add(new BasicNameValuePair("country", user.getCountry()));
         
         //use the generic list fn to post JSON obj
 		WebServiceUtility webServiceUtility = new WebServiceUtility();

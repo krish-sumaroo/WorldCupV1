@@ -20,7 +20,7 @@ import com.competition.worldcupv1.dto.UserDTO;
 import com.competition.worldcupv1.utils.WebServiceUtility;
 
 public class WebServiceHelper {	
-	private DatabaseHelper dbHelper;
+	private DatabaseHelper dbHelper;  
 
 //	public WebServiceHelper(Context context) {
 //		this.context = context;

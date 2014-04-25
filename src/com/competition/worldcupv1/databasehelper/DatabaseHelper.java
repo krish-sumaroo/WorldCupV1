@@ -45,12 +45,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public final String MATCH_STATUS = "status";
 	public final String MATCH_KICKOFF = "kick_off";
 	public final String MATCH_VENUE = "venue";
-		
-	private static final String insertResultOK = "Data inserted successfully";
-	private static final String insertResultKO = "Could not insert data";
-	private static final String updateResultOK = "Data updated successfully";
-	private static final String updateResultKO = "Could not update data";
-	private String result = "No update found";
 	
 	private SQLiteDatabase db ;
 
@@ -237,6 +231,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return mCursor;		
 	}
 	
+	public Cursor fetchTeamName() throws SQLException{
+		StringBuffer sql = new StringBuffer();
+		final String constantStatement = "SELECT t.team_name "+ "FROM team t";
+		sql.append(constantStatement);		
+		Cursor mCursor = db.rawQuery(sql.toString(), null);
+		if (mCursor != null) {
+			mCursor.moveToFirst();
+		}
+		return mCursor;		
+	}
+	
 	public Cursor executeQuery(String sql, String[] selectionArgs){
 		Cursor mCursor = db.rawQuery(sql.toString(), selectionArgs);
 		if (mCursor != null) {
@@ -263,5 +268,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 		return false;
 	}
+	
+	//insert Team Values
+	public void addTeam(TeamDTO team){
+        // get reference to writable DB
+        SQLiteDatabase db = this.getWritableDatabase();
+ 
+        // create ContentValues to add key "column"/value
+        ContentValues values = new ContentValues();
+        
+        values.put(PLAYER_PLAYERID, team.getTeamId());
+		values.put(TEAM_TEAMNAME, team.getTeamName());
+		values.put(TEAM_COUNTRYCODE, team.getCountryCode());
+		values.put(TEAM_COACH, team.getCoach());
+
+        // insert to db
+        db.insert(DB_TABLE_TEAM, // table
+             null, //nullColumnHack
+                values); // key/value -> keys = column names/ values = column values
+ 
+        // close db
+        db.close();
+    }
 	
 }

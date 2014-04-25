@@ -21,9 +21,6 @@ import com.competition.worldcupv1.utils.WebServiceUtility;
 
 public class WebServiceHelper {	
 	private DatabaseHelper dbHelper;
-	private Context context;
-	private static final String webServiceURL = "http://10.0.2.2/WorldCup_web/index.php/resource/";
-	//private static final String webServiceURL = "http://192.168.1.4/WorldCup_web/index.php/resource/";
 
 //	public WebServiceHelper(Context context) {
 //		this.context = context;
@@ -203,10 +200,13 @@ public class WebServiceHelper {
 		String result="";
       
     	// Add data
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
-        nameValuePairs.add(new BasicNameValuePair("name", user.getName()));
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(6);
+        nameValuePairs.add(new BasicNameValuePair("userName", user.getUserName()));
         nameValuePairs.add(new BasicNameValuePair("uid", user.getUid()));
         nameValuePairs.add(new BasicNameValuePair("country", user.getCountry()));
+        nameValuePairs.add(new BasicNameValuePair("nickName", user.getNickName()));
+        nameValuePairs.add(new BasicNameValuePair("password", user.getPassword()));
+        nameValuePairs.add(new BasicNameValuePair("favTeam", user.getFavTeam()));
         
         //use the generic list fn to post JSON obj
 		WebServiceUtility webServiceUtility = new WebServiceUtility();
@@ -284,5 +284,28 @@ public class WebServiceHelper {
 		WebServiceUtility webServiceUtility = new WebServiceUtility();
 		JSONObject jObject = webServiceUtility.postData(nameValuePairs, url);
               
-	}	
+	}
+	
+	//login
+	public String login(Context context, UserDTO user) throws ClientProtocolException, IOException, JSONException{
+		String url = "login";
+		String result="";
+      
+    	// Add data
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(6);
+        nameValuePairs.add(new BasicNameValuePair("userName", user.getUserName()));
+        nameValuePairs.add(new BasicNameValuePair("password", user.getPassword()));
+        
+        //use the generic list fn to post JSON obj
+		WebServiceUtility webServiceUtility = new WebServiceUtility();
+		JSONObject jObject = webServiceUtility.postData(nameValuePairs, url);
+		
+        if(jObject.getString("status").equals("true")){  	
+        	result= "loginSuccess";
+        }else{
+        	Log.d("status:","false");
+        	result= "loginFailed";
+        }
+		return result;
+	}
 }

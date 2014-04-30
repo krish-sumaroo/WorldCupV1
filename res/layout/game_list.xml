@@ -11,4 +11,10 @@
         android:text="GAME LIST PAGE"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <Button
+        android:id="@+id/btnLogoutTwitter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logout" />
+
 </LinearLayout>

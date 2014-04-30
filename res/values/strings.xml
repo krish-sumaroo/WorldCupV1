@@ -15,7 +15,9 @@
     <string name="register">Register</string>
     <string name="pwd_lost">Lost Password</string>
     <string name="nick_name">Nickname</string>
-    <string name="country">Your Country</string>  
-    <string name="fav_team">Favourite Team</string>  
-	<string name="default_country">Country</string>  
+    <string name="country">Your Country</string>
+    <string name="fav_team">Favourite Team</string>
+    <string name="default_country">Country</string>
+    <string name="title_activity_first">FirstActivity</string>
+
 </resources>

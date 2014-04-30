@@ -74,4 +74,31 @@
         android:layout_below="@+id/btnListGet"
         android:text="Test WIFI Connectivity" />
 
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/welcome"
+        android:layout_toRightOf="@+id/btnWifi"
+        android:text="logout" />
+
+    <Button
+        android:id="@+id/btnLoginTwitter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnCrUser"
+        android:layout_alignBottom="@+id/btnCrUser"
+        android:layout_alignLeft="@+id/btnLogout"
+        android:text="login twitter" />
+
+    <Button
+        android:id="@+id/btnLogoutTwitter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnListGet"
+        android:layout_alignRight="@+id/btnLoginTwitter"
+        android:layout_marginBottom="22dp"
+        android:text="Logout Twitter" 
+       />
+
 </RelativeLayout>

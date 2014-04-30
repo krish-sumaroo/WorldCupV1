@@ -46,100 +46,113 @@ public class RegisterActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.register);         
 		
-		mSplashThread = new Thread() {
-			@Override		
-			public void run() {
-			try {
-				// Thread will sleep for 5 seconds
-				//sleep(1*1000);
-	          
-				// After 5 seconds redirect to another intent     		
-				// populate the database
-              
-				// Importing all assets like buttons, text fields
-	            countryList = (Spinner) findViewById( R.id.spinnerCountry);
-	            countryList.setPromptId(R.string.default_country);
-	            favTeamList = (Spinner) findViewById( R.id.spinnerTeam);
-	            btnRegisterUser = (Button) findViewById(R.id.btnRegisterSave);
-	            btnLinkToLogin = (Button) findViewById(R.id.btnRegisterCancel);
-	            txtUserName = (EditText) findViewById( R.id.editTextRegUsrName);
-	            txtNickName = (EditText) findViewById( R.id.editTextNickName);
-	            txtPassword = (EditText) findViewById( R.id.editTextPwd);
-	            
-	            btnRegisterUser.setOnClickListener(new OnClickListener() {	
-					@Override
-					public void onClick(View v) {						
-						String country = countryList.getSelectedItem().toString();
-		            	String favTeam = favTeamList.getSelectedItem().toString();
-		            	final ConnectionUtility connectionUtility = new ConnectionUtility();
-		            	if(( txtUserName.length() == 0 || txtUserName.equals("") || txtUserName == null) || (txtNickName.length() == 0 || txtNickName.equals("") || txtNickName == null) || (txtPassword.length() == 0 || txtPassword.equals("") || txtPassword == null) || (country.equalsIgnoreCase("Country")) || (favTeam.equalsIgnoreCase("Team")))
-		                {    		    	
-		            		Toast.makeText(getApplicationContext(), "Please fill in all the fields", Toast.LENGTH_LONG).show(); 
-		                }
-		            	else{
-		                	final String userName = txtUserName.getText().toString();
-		                	final String nickName = txtNickName.getText().toString();
-		                	final String password = txtPassword.getText().toString();
-		                	final String countrySelected = countryList.getSelectedItem().toString();
-		                	final String favTeamSelected = favTeamList.getSelectedItem().toString();
-		                	
-		                	final TelephonyManager mTelephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-		    		    	//get deviceID
-		    		        if (mTelephony.getDeviceId() != null){
-		    		        	uid = mTelephony.getDeviceId(); //use for mobiles
-		    		         }
-		    		        else{
-		    		        	uid = Secure.getString(getApplicationContext().getContentResolver(), Secure.ANDROID_ID); //use for tablets
-		    		         }   		    	
-		    		    	final UserDTO user = new UserDTO(userName,uid,countrySelected,nickName,password,favTeamSelected);
-		   		    	
-		    		    	try {
-		    					if(connectionUtility.hasWifi(getBaseContext())){
-		    						saveUser(user);
-		    					}
-		    					else{
-		    						connectionUtility.showToast(RegisterActivity.this);
-		    						connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
-		    							@Override
-		    							public void onInternetEnabled(boolean result) {
-		    								saveUser(user);
-		    								Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
-		                                    // Close all views before launching matchList
-		                                    matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		                                    startActivity(matchList);	    	
-		    							}
-		    							@Override
-		    							public void exitApplication(boolean result) {
-		    								onDestroy();
-		    								finish();				
-		    							}
-		    						});	
-		    					}
-		    		    	}
-							finally{
-								
-							}            
-		                }
-					}
-				});	            
-	        	
-	            // Link to Login Screen
-	            btnLinkToLogin.setOnClickListener(new View.OnClickListener() { 
-	                public void onClick(View view) {
-	                    Intent i = new Intent(getApplicationContext(),LoginActivity.class);
-	                    startActivity(i);
-	                    // Close Registration View
-	                    finish();
+		mSplashThread = new Thread() {    
+	        public void run() {
+	            try {
+	            	runOnUiThread(new Runnable() {  
+	                    @Override
+	                    public void run() {
+	                    	
+	                    	
+	                    	
+	                      				// Thread will sleep for 5 seconds
+			//sleep(1*1000);
+          
+			// After 5 seconds redirect to another intent     		
+			// populate the database
+          
+			// Importing all assets like buttons, text fields
+            countryList = (Spinner) findViewById( R.id.spinnerCountry);
+           // countryList.setPromptId(R.string.default_country);
+            favTeamList = (Spinner) findViewById( R.id.spinnerTeam);
+            btnRegisterUser = (Button) findViewById(R.id.btnRegisterSave);
+            btnLinkToLogin = (Button) findViewById(R.id.btnRegisterCancel);
+            txtUserName = (EditText) findViewById( R.id.editTextRegUsrName);
+            txtNickName = (EditText) findViewById( R.id.editTextNickName);
+            txtPassword = (EditText) findViewById( R.id.editTextPwd);
+            
+            btnRegisterUser.setOnClickListener(new OnClickListener() {	
+				@Override
+				public void onClick(View v) {						
+					String country = countryList.getSelectedItem().toString();
+	            	String favTeam = favTeamList.getSelectedItem().toString();
+	            	final ConnectionUtility connectionUtility = new ConnectionUtility();
+	            	if(( txtUserName.length() == 0 || txtUserName.equals("") || txtUserName == null) || (txtNickName.length() == 0 || txtNickName.equals("") || txtNickName == null) || (txtPassword.length() == 0 || txtPassword.equals("") || txtPassword == null) || (country.equalsIgnoreCase("Country")) || (favTeam.equalsIgnoreCase("Team")))
+	                {    		    	
+	            		Toast.makeText(getApplicationContext(), "Please fill in all the fields", Toast.LENGTH_LONG).show(); 
 	                }
-	            });
-           getCountryList();
-           getTeamList();
-         } catch (Exception e) {          
-         	}
-		}		
-		};
-	    // start thread
-	    mSplashThread.start();
+	            	else{
+	                	final String userName = txtUserName.getText().toString();
+	                	final String nickName = txtNickName.getText().toString();
+	                	final String password = txtPassword.getText().toString();
+	                	final String countrySelected = countryList.getSelectedItem().toString();
+	                	final String favTeamSelected = favTeamList.getSelectedItem().toString();
+	                	
+	                	final TelephonyManager mTelephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+	    		    	//get deviceID
+	    		        if (mTelephony.getDeviceId() != null){
+	    		        	uid = mTelephony.getDeviceId(); //use for mobiles
+	    		         }
+	    		        else{
+	    		        	uid = Secure.getString(getApplicationContext().getContentResolver(), Secure.ANDROID_ID); //use for tablets
+	    		         }   		    	
+	    		    	final UserDTO user = new UserDTO(userName,uid,countrySelected,nickName,password,favTeamSelected);
+	   		    	
+	    		    	try {
+	    					if(connectionUtility.hasWifi(getBaseContext())){
+	    						saveUser(user);
+	    					}
+	    					else{
+	    						connectionUtility.showToast(RegisterActivity.this);
+	    						connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
+	    							@Override
+	    							public void onInternetEnabled(boolean result) {
+	    								saveUser(user);
+	    								Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
+	                                    // Close all views before launching matchList
+	                                    matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	                                    startActivity(matchList);	    	
+	    							}
+	    							@Override
+	    							public void exitApplication(boolean result) {
+	    								onDestroy();
+	    								finish();				
+	    							}
+	    						});	
+	    					}
+	    		    	}
+						finally{
+							
+						}            
+	                }
+				}
+			});	            
+        	
+            // Link to Login Screen
+            btnLinkToLogin.setOnClickListener(new View.OnClickListener() { 
+                public void onClick(View view) {
+                    //Intent i = new Intent(getApplicationContext(),LoginActivity.class);
+                    //startActivity(i);
+                    // Close Registration View
+                    finish();
+                }
+            });
+            insertTeamList();
+            getCountryList();
+            getTeamList();
+
+	                    }
+	                });
+	            } catch (Exception e) {
+	                System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>> e " + e.getMessage());
+     	}
+	            }
+
+	        };
+
+
+    // start thread
+    mSplashThread.start();
 	}
 
 	@Override
@@ -212,5 +225,10 @@ public class RegisterActivity extends Activity {
         spinnerArrayAdapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );       
         favTeamList = (Spinner) findViewById( R.id.spinnerTeam);
         favTeamList.setAdapter(spinnerArrayAdapter);
+	}
+	
+	public void insertTeamList(){
+        TeamService teamService = new TeamService();
+        teamService.insertTeamsData(RegisterActivity.this);
 	}
 }

@@ -92,7 +92,7 @@
         android:text="" />
 
     <Button
-        android:id="@+id/btnTwitter"
+        android:id="@+id/btnLoginTwitter"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="28dp"
@@ -107,9 +107,17 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="28dp"
-        android:layout_alignBaseline="@+id/btnTwitter"
-        android:layout_alignBottom="@+id/btnTwitter"
+        android:layout_alignBaseline="@+id/btnLoginTwitter"
+        android:layout_alignBottom="@+id/btnLoginTwitter"
         android:layout_alignParentRight="true"
         android:background="@drawable/button_image_google" />
+
+    <Button
+        android:id="@+id/btnLogoutTwitter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/btnLostPwd"
+        android:text="Logout" />
 
 </RelativeLayout>

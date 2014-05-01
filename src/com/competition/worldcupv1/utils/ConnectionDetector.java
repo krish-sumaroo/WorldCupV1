@@ -1,4 +1,4 @@
-package com.competition.worldcupv1;
+package com.competition.worldcupv1.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

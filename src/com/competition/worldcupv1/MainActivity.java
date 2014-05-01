@@ -37,6 +37,8 @@ import android.widget.Toast;
 import com.competition.worldcupv1.asynctasks.LoginTask;
 import com.competition.worldcupv1.asynctasks.LoginTask.LoginTaskListener;
 import com.competition.worldcupv1.dto.UserDTO;
+import com.competition.worldcupv1.utils.AlertDialogManager;
+import com.competition.worldcupv1.utils.ConnectionDetector;
 import com.competition.worldcupv1.utils.ConnectionUtility;
 import com.competition.worldcupv1.utils.ConnectionUtility.ConnectionUtilityListener;
 import com.competition.worldcupv1.utils.SessionManager;

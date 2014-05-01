@@ -1,4 +1,6 @@
-package com.competition.worldcupv1;
+package com.competition.worldcupv1.utils;
+
+import com.competition.worldcupv1.R;
 
 import android.app.AlertDialog;
 import android.content.Context;

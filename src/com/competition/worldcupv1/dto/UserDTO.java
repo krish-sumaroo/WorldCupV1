@@ -10,12 +10,12 @@ public class UserDTO implements Serializable{
 	private String country;
 	private String nickName;
 	private String password;
-	private String favTeam;
+	private long favTeam;
 		
 	public UserDTO(){}
 
 	public UserDTO(String userName, String uid, String country,
-			String nickName, String password, String favTeam) {
+			String nickName, String password, long favTeam) {
 		super();
 		this.userName = userName;
 		this.uid = uid;
@@ -49,11 +49,11 @@ public class UserDTO implements Serializable{
 		this.password = password;
 	}
 
-	public String getFavTeam() {
+	public long getFavTeam() {
 		return favTeam;
 	}
 
-	public void setFavTeam(String favTeam) {
+	public void setFavTeam(long favTeam) {
 		this.favTeam = favTeam;
 	}
 

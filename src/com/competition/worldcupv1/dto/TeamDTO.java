@@ -49,4 +49,9 @@ public class TeamDTO implements Serializable{
 		this.coach = coach;
 	}
 	
+	@Override
+	public String toString() {
+	    return this.teamName;
+	}
+	
 }

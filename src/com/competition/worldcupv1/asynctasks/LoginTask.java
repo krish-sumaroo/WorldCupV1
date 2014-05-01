@@ -41,6 +41,7 @@ public class LoginTask extends AsyncTask<Void, Void, String>{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (JSONException e) {
+			System.out.println(">>>>>>>>>>>>>>>> e " + e.getMessage());
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -6,23 +6,17 @@ import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-import android.view.Gravity;
-import android.widget.Toast;
 
-public class ConnectionUtility {
-	
-	private ConnectionUtilityListener utilityListener;
-	
+public class ConnectionUtility {	
+	private ConnectionUtilityListener utilityListener;	
 	public boolean hasWifi(Context context) {
 		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo netInfo = cm.getActiveNetworkInfo();
 		return (netInfo != null && netInfo.isConnectedOrConnecting());
-	}
-	
+	}	
 	public void showToast(final Context context){
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
     	builder.setMessage("Enable your internet connection and try again");
-
     	builder.setCancelable(false);
     	builder.setPositiveButton("Ok",new DialogInterface.OnClickListener() {
 	    	public void onClick(DialogInterface dialog, int id) {
@@ -45,22 +39,17 @@ public class ConnectionUtility {
 				dialog.dismiss();
 			}    		
     	});
-
     	 builder.create();
     	 builder.show();
-	}
-		
+	}		
 	public ConnectionUtilityListener getUtilityListener() {
 		return utilityListener;
 	}
-
 	public void setUtilityListener(ConnectionUtilityListener utilityListener) {
 		this.utilityListener = utilityListener;
-	}
-	
+	}	
 	public interface  ConnectionUtilityListener {
-		public void onInternetEnabled(boolean result);
-		
+		public void onInternetEnabled(boolean result);		
 		public void exitApplication(boolean result);
 	}
 }

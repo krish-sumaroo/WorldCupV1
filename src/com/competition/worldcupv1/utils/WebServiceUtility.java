@@ -16,7 +16,7 @@ import org.json.JSONObject;
 
 public class WebServiceUtility {
 	//private static final String webServiceURL = "http://10.0.2.2/WorldCup_web/index.php/resource/"; 
-	private static final String webServiceURL = "http://192.168.1.4/WorldCup_web/index.php/resource/";
+	private static final String webServiceURL = "http://54.85.111.97/wc/master/index.php/";
 	
 	public JSONArray  extractList(String listUrl) throws ClientProtocolException, IOException, JSONException {
 		JSONArray jArray = null;

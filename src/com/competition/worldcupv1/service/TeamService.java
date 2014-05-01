@@ -4,21 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.competition.worldcupv1.databasehelper.DatabaseHelper;
-import com.competition.worldcupv1.dto.PlayerDTO;
 import com.competition.worldcupv1.dto.TeamDTO;
-import com.competition.worldcupv1.enums.Role;
 
 import android.content.Context;
 import android.database.Cursor;
 
-
-public class TeamService {
-	
+public class TeamService {	
 	public void insertTeamsData(Context context){
 	    DatabaseHelper db = new DatabaseHelper(context);
-
-	    Boolean isTableFill = db.isTableMatchFill();
-	    
+	    Boolean isTableFill = db.isTableMatchFill();	    
 	    if(!isTableFill){
 		    //createTeam(long _id, String team_name, String country_code, String coach)
 		    TeamDTO team1 = new TeamDTO("Spain", "ES", "X");
@@ -34,12 +28,11 @@ public class TeamService {
 		    db.addTeam(team2);
 		    db.addTeam(team3);
 		    db.addTeam(team4);
-	    }
-	   
+	    }	   
 	}
 	
-	public ArrayList<String> getTeamName(Context context){	
-		ArrayList<String> teamNameList = new ArrayList<String>();		
+	public ArrayList<TeamDTO> getTeamName(Context context){	
+		ArrayList<TeamDTO> teamList = new ArrayList<TeamDTO>();		
 		DatabaseHelper dbHelper =  new DatabaseHelper(context);
 		dbHelper.open();
 		Cursor cursor = null;
@@ -47,13 +40,16 @@ public class TeamService {
 		cursor.moveToFirst();
 
 		while (cursor.isAfterLast() == false) {	
+			TeamDTO team = new TeamDTO();
+			int teamId = (cursor.getInt(cursor.getColumnIndex("_id")));
 			String teamName = (cursor.getString(cursor.getColumnIndex("team_name")));
-			teamNameList.add(teamName);
+			team.setTeamId(teamId);
+			team.setTeamName(teamName);
+			teamList.add(team);
 			cursor.moveToNext();
 		}		
 		dbHelper.close();		
-		System.out.println(">>>>>>>>> getTeamName = " + teamNameList.size());
-		return teamNameList;
-	}
-	
+		System.out.println(">>>>>>>>> getTeamName = " + teamList.size());
+		return teamList;
+	}	
 }

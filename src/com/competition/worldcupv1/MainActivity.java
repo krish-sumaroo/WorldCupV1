@@ -27,6 +27,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -206,8 +207,10 @@ public class MainActivity extends Activity {
 		            public void onClick(View view) {
 		            	final ConnectionUtility connectionUtility = new ConnectionUtility();
 		            	if(( txtUserName.length() == 0 || txtUserName.equals("") || txtUserName == null) || (txtPassword.length() == 0 || txtPassword.equals("") || txtPassword == null))
-		                {    		    	
-		            		Toast.makeText(getApplicationContext(), "Please fill in all the fields", Toast.LENGTH_LONG).show(); 
+		                {    	
+		            		Toast toast = Toast.makeText(MainActivity.this,"Please fill in all the fields", Toast.LENGTH_LONG);
+		            		toast.setGravity(Gravity.CENTER, 0, 0);
+		            		toast.show();
 		                }
 		            	else{
 		            		final String userName = txtUserName.getText().toString();
@@ -268,7 +271,9 @@ public class MainActivity extends Activity {
 	            }
 	        } else {
 	            // user already logged into twitter
-	            Toast.makeText(getApplicationContext(), "Already Logged into twitter", Toast.LENGTH_LONG).show();
+	        	Toast toast = Toast.makeText(MainActivity.this,"Already Logged into twitter", Toast.LENGTH_LONG);
+        		toast.setGravity(Gravity.CENTER, 0, 0);
+        		toast.show();
 	        }
 	    }	 
 	 

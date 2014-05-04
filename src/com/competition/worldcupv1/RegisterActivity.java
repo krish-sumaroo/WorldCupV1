@@ -10,11 +10,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
 import android.telephony.TelephonyManager;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +44,9 @@ public class RegisterActivity extends Activity {
     private Spinner favTeamList;    
     private Thread thread;
     SessionManager session;
+    ImageView imageInfoUsr;
+    ImageView imageInfoCountry;
+    ImageView imageInfoTeam;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,9 @@ public class RegisterActivity extends Activity {
 				            txtUserName = (EditText) findViewById( R.id.editTextRegUsrName);
 				            txtNickName = (EditText) findViewById( R.id.editTextNickName);
 				            txtPassword = (EditText) findViewById( R.id.editTextPwd);
+				            imageInfoUsr = (ImageView) findViewById( R.id.imageInfoUsr);
+				            imageInfoCountry = (ImageView) findViewById( R.id.imageInfoCountry);
+				            imageInfoTeam = (ImageView) findViewById( R.id.imageInfoTeam);				            
 				            
 				            btnRegisterUser.setOnClickListener(new OnClickListener() {	
 								@Override
@@ -70,8 +78,10 @@ public class RegisterActivity extends Activity {
 					            	String favTeam = favTeamList.getSelectedItem().toString();
 					            	final ConnectionUtility connectionUtility = new ConnectionUtility();
 					            	if(( txtUserName.length() == 0 || txtUserName.equals("") || txtUserName == null) || (txtNickName.length() == 0 || txtNickName.equals("") || txtNickName == null) || (txtPassword.length() == 0 || txtPassword.equals("") || txtPassword == null) || (country.equalsIgnoreCase("Country")) || (favTeam.equalsIgnoreCase("Team")))
-					                {    		    	
-					            		Toast.makeText(getApplicationContext(), "Please fill in all the fields", Toast.LENGTH_LONG).show(); 
+					                {    		    	 
+					            		Toast toast = Toast.makeText(RegisterActivity.this,"Please fill in all the fields", Toast.LENGTH_LONG);
+					            		toast.setGravity(Gravity.CENTER, 0, 0);
+					            		toast.show();
 					                }
 					            	else{
 					                	final String userName = txtUserName.getText().toString();
@@ -113,7 +123,31 @@ public class RegisterActivity extends Activity {
 										}            
 					                }
 								}
-							});	            
+							});	
+				            
+				            imageInfoUsr.setOnClickListener(new View.OnClickListener() { 
+				                public void onClick(View view) {
+				                	Toast toast = Toast.makeText(RegisterActivity.this,"Please enter your email address", Toast.LENGTH_LONG);
+				            		toast.setGravity(Gravity.CENTER, 0, 0);
+				            		toast.show();
+				                }
+				            });
+				            
+				            imageInfoCountry.setOnClickListener(new View.OnClickListener() { 
+				                public void onClick(View view) {
+				                	Toast toast = Toast.makeText(RegisterActivity.this,"Please select your country", Toast.LENGTH_LONG);
+				            		toast.setGravity(Gravity.CENTER, 0, 0);
+				            		toast.show();
+				                }
+				            });
+				            
+				            imageInfoTeam.setOnClickListener(new View.OnClickListener() { 
+				                public void onClick(View view) {
+				                	Toast toast = Toast.makeText(RegisterActivity.this,"Please select your favorite team", Toast.LENGTH_LONG);
+				            		toast.setGravity(Gravity.CENTER, 0, 0);
+				            		toast.show();
+				                }
+				            });
 				        	
 				            // Link to Login Screen
 				            btnLinkToLogin.setOnClickListener(new View.OnClickListener() { 
@@ -159,12 +193,16 @@ public class RegisterActivity extends Activity {
 		             }
                     if(result.equalsIgnoreCase("Username or Nickname already exists")){
                     	// Error in registration
-    					Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show(); 
+                    	Toast toast = Toast.makeText(RegisterActivity.this,result, Toast.LENGTH_LONG);
+	            		toast.setGravity(Gravity.CENTER, 0, 0);
+	            		toast.show();
                     }                   
 				}
 				else{
                     // Error in registration
-					Toast.makeText(getApplicationContext(), "Error occured in registration", Toast.LENGTH_LONG).show(); 
+					Toast toast = Toast.makeText(RegisterActivity.this,"Error occured in registration", Toast.LENGTH_LONG);
+            		toast.setGravity(Gravity.CENTER, 0, 0);
+            		toast.show();
                }				
 			}
 		});

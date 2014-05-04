@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
 import android.telephony.TelephonyManager;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -86,8 +87,10 @@ public class TwitterFacebookRegistration extends Activity {
 					            	String favTeam = favTeamList.getSelectedItem().toString();
 									final ConnectionUtility connectionUtility = new ConnectionUtility();
 					            	if((country.equalsIgnoreCase("Country")) || (favTeam.equalsIgnoreCase("Team")))
-					                {    		    	
-					            		Toast.makeText(getApplicationContext(), "Please fill in all the fields", Toast.LENGTH_LONG).show(); 
+					                {   
+					            		Toast toast = Toast.makeText(TwitterFacebookRegistration.this,"Please fill in all the fields", Toast.LENGTH_LONG);
+					            		toast.setGravity(Gravity.CENTER, 0, 0);
+					            		toast.show();
 					                }
 					            	else{
 					                	final String countrySelected = countryList.getSelectedItem().toString();
@@ -212,12 +215,15 @@ public class TwitterFacebookRegistration extends Activity {
 		                finish();
 		             }
                     else{
-                    	Toast.makeText(getApplicationContext(), "Error in registration", Toast.LENGTH_LONG).show(); 
+                    	Toast toast = Toast.makeText(TwitterFacebookRegistration.this,"Username or NickName already exists", Toast.LENGTH_LONG);
+	            		toast.setGravity(Gravity.CENTER, 0, 0);
+	            		toast.show();
                     }                                 
 				}
 				else{
-                    // Error in registration
-					Toast.makeText(getApplicationContext(), "Error occured in registration", Toast.LENGTH_LONG).show(); 
+					Toast toast = Toast.makeText(TwitterFacebookRegistration.this,"Error occured in registration", Toast.LENGTH_LONG);
+            		toast.setGravity(Gravity.CENTER, 0, 0);
+            		toast.show();                    
                }				
 			}
 		});

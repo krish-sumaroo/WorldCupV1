@@ -234,8 +234,8 @@ containing a value of this type.
         public static final int twitter=0x7f02002f;
     }
     public static final class id {
-        public static final int btnCancelReg=0x7f04003a;
-        public static final int btnCompleteRegist=0x7f040039;
+        public static final int btnCancelReg=0x7f04003b;
+        public static final int btnCompleteRegist=0x7f04003a;
         public static final int btnFbk=0x7f040025;
         public static final int btnGoogle=0x7f040027;
         public static final int btnLogin=0x7f040022;
@@ -270,9 +270,10 @@ containing a value of this type.
         public static final int editTextPwd=0x7f04002b;
         public static final int editTextRegUsrName=0x7f04002a;
         public static final int imageInfoCountry=0x7f040034;
+        public static final int imageInfoTeam=0x7f040033;
         public static final int imageInfoUsr=0x7f040032;
-        public static final int imageView1=0x7f040033;
-        public static final int imageView2=0x7f040038;
+        public static final int imageView1=0x7f040037;
+        public static final int imageView2=0x7f040039;
         public static final int large=0x7f040002;
         public static final int logInName=0x7f04001b;
         public static final int logInNormalUsr=0x7f04001c;
@@ -283,7 +284,7 @@ containing a value of this type.
         public static final int spinnerTeam=0x7f040031;
         public static final int textView1=0x7f040018;
         public static final int textView2=0x7f04001a;
-        public static final int textView3=0x7f040037;
+        public static final int textView3=0x7f040038;
         public static final int textViewPwd=0x7f04001f;
         public static final int txtCountry=0x7f04002e;
         public static final int txtFavTeam=0x7f040030;

@@ -47,6 +47,7 @@ public class GameListActivity extends Activity {
 
    	Button btnLogout;
    	TextView logInName;
+   	TextView logInNormalUsr;
    	ProgressDialog pDialog;
    	private static SharedPreferences mSharedPreferences;
    	SessionManager session;
@@ -62,10 +63,13 @@ public class GameListActivity extends Activity {
         session = new SessionManager(getApplicationContext());		
 	    btnLogout = (Button) findViewById(R.id.btnLogoutTwitter);
 	    logInName = (TextView) findViewById( R.id.logInName);
+	    logInNormalUsr = (TextView) findViewById( R.id.logInName);
 	    
         HashMap<String, String> user = session.getUserDetails();   
         String nickName = user.get(SessionManager.KEY_NICKNAME);
-        logInName.setText(nickName);	    
+        String userName = user.get(SessionManager.KEY_USERNAME);
+        logInName.setText(nickName);
+        logInNormalUsr.setText(userName);
 		// Shared Preferences
 		mSharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0);
 		btnLogout.setOnClickListener(new View.OnClickListener() {	 
@@ -78,6 +82,7 @@ public class GameListActivity extends Activity {
                 // Close all views before launching matchList
                 mainAct.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(mainAct);
+                finish();
 	        }
 	    });		
 	}

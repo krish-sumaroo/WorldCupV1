@@ -32,6 +32,7 @@ public class SessionManager {
     public static final String KEY_TWITTER_NICK = "twitterNick";
     public static final String KEY_FACEBOOK_USERNAME = "faceBkUsername";
     public static final String KEY_FACEBOOK_NICKNAME = "faceBkNickname";
+    public static final String KEY_LOGIN_TYPE = "loginType";
      
     // Constructor
     public SessionManager(Context context){
@@ -57,6 +58,17 @@ public class SessionManager {
     /**
      * Create login session
      * */
+    public void createTempSession(String userName, String uid, String nickName, long favTeamId, String country){
+        // Storing login value as TRUE
+        editor.putBoolean(IS_LOGIN, false);         
+        editor.putString(KEY_USERNAME, userName);      
+        // commit changes
+        editor.commit();
+    }
+    
+    /**
+     * Create login session
+     * */
     public void disableLogin(){
         // Storing login value as TRUE
         editor.putBoolean(IS_LOGIN, false); 
@@ -70,6 +82,15 @@ public class SessionManager {
     public void addTwitterLoginSession(String accessToken,String nickName){      
         editor.putString(KEY_TWITTER_TOKEN, accessToken);
         editor.putString(KEY_TWITTER_NICK, nickName); 
+        // commit changes
+        editor.commit();
+    }     
+    
+    /**
+     * Create login session
+     * */
+    public void addLoginType(String loginType){      
+        editor.putString(KEY_LOGIN_TYPE, loginType);
         // commit changes
         editor.commit();
     }     
@@ -135,6 +156,17 @@ public class SessionManager {
         HashMap<String, String> user = new HashMap<String, String>();
         user.put(KEY_TWITTER_TOKEN, pref.getString(KEY_TWITTER_TOKEN, null));        
         user.put(KEY_TWITTER_NICK, pref.getString(KEY_TWITTER_NICK, null));
+        // return user
+        return user;
+    }    
+    
+    
+    /**
+     * Get twitter stored session data
+     * */
+    public HashMap<String, String> getLoginType(){
+        HashMap<String, String> user = new HashMap<String, String>();
+        user.put(KEY_LOGIN_TYPE, pref.getString(KEY_LOGIN_TYPE, null));        
         // return user
         return user;
     }    

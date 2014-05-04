@@ -71,8 +71,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_alignRight="@+id/textView1"
+            android:layout_alignParentRight="true"
             android:layout_marginBottom="30dp"
             android:text="Complete Registration" />
+
+        <Button
+            android:id="@+id/btnCancelReg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/btnCompleteRegist"
+            android:layout_alignLeft="@+id/textView3"
+            android:text="Cancel" />
 
 </RelativeLayout>

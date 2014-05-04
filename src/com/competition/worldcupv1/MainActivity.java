@@ -3,6 +3,7 @@ package com.competition.worldcupv1;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.HashMap;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,6 +29,7 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -86,6 +88,7 @@ public class MainActivity extends Activity {
 	private EditText txtUserName;
 	private EditText txtPassword;
 	UserDTO userDto = null;
+	private CheckBox rememberMe;
      
     // Shared Preferences
     private static SharedPreferences mSharedPreferences;
@@ -101,13 +104,13 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);		   
         mPrefs = getPreferences(MODE_PRIVATE);
+		// Session class instance
+        session = new SessionManager(getApplicationContext());	
 	
 		// initialise facebook
 		facebook = new Facebook(APP_ID);
         mAsyncRunner = new AsyncFacebookRunner(facebook);
-                        
-		// Session class instance
-        session = new SessionManager(getApplicationContext());		
+	
 		boolean isLoggedIn = session.isLoggedIn();
 		//if isloggged in go to list page directly
 		if(isLoggedIn){
@@ -118,6 +121,7 @@ public class MainActivity extends Activity {
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);             
             // Staring Login Activity
             getApplicationContext().startActivity(i);
+            finish();
 		}
 		else{
 			//if not already logged in delete facebook token if in session
@@ -195,6 +199,7 @@ public class MainActivity extends Activity {
 			    txtPassword = (EditText) findViewById(R.id.txt_pwd);
 			    btnLogin = (Button) findViewById(R.id.btnLogin);
 			    btnLinkToRegister = (Button) findViewById(R.id.btnRegister);
+			    rememberMe = (CheckBox) findViewById(R.id.chkRemeber);
 			        
 		        // Login button Click Event (normal)
 		        btnLogin.setOnClickListener(new View.OnClickListener() {		 
@@ -217,7 +222,7 @@ public class MainActivity extends Activity {
 		    						connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
 		    							@Override
 		    							public void onInternetEnabled(boolean result) {
-		    								login(user);    	
+		    								login(user);  
 		    							}
 		    							@Override
 		    							public void exitApplication(boolean result) {
@@ -238,6 +243,7 @@ public class MainActivity extends Activity {
 			    	public void onClick(View view) {
 			        	Intent i = new Intent(getApplicationContext(),RegisterActivity.class);
 			            startActivity(i);
+			            finish();
 			            }
 			    });
 			}	 
@@ -374,7 +380,11 @@ public class MainActivity extends Activity {
 				if (result != "") {   
                     if (result == "loginSuccess") {				
 						System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> result" + result);
-						session.createLoginSession(user.getUserName(),"","",0,"");
+						if(rememberMe.isChecked()){
+							session.createLoginSession(user.getUserName(),"","",0,"");
+						}else{
+							session.createTempSession(user.getUserName(),"","",0,"");
+						}						
 						Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
 		                // Close all views before launching matchList
 		                matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -422,7 +432,7 @@ public class MainActivity extends Activity {
 							}
 		                    String nickname = user.getName();
 		                    userDto = new UserDTO(String.valueOf(userID), "", "", nickname, "", 0);
-		                    session.createLoginSession(String.valueOf(userID), "", nickname, 0, "");		                    
+		                    session.createLoginSession(String.valueOf(userID), "", nickname, 0, "");		
 							Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
 			                // Close all views before launching matchList
 			                matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -441,6 +451,7 @@ public class MainActivity extends Activity {
 							}
 		                    String nickname = user.getName();	  
 		                    session.addTwitterLoginSession(String.valueOf(userID), nickname);
+		                    session.addLoginType("twitter");
 	                    	Intent completeRegistration = new Intent(getApplicationContext(), TwitterFacebookRegistration.class);
 			                // Close all views before launching matchList
 	                    	completeRegistration.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -479,6 +490,7 @@ public class MainActivity extends Activity {
 		             }
                     else{  
 		                session.addFacebookLoginSession(user.getUserName(), user.getNickName());
+		                session.addLoginType("facebook");
                     	Intent completeRegistration = new Intent(getApplicationContext(), TwitterFacebookRegistration.class);
 		                // Close all views before launching matchList
                     	completeRegistration.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -35,6 +35,9 @@ public class TwitterFacebookRegistration extends Activity {
     String uid = "";	
 	//Session Manager Class
     SessionManager session;
+    private Button btnCancelReg;
+    String loginUserName = null;
+	String loginNickName = null;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +54,29 @@ public class TwitterFacebookRegistration extends Activity {
 	                    	countryList = (Spinner) findViewById( R.id.spinnerCountry);
 				            favTeamList = (Spinner) findViewById( R.id.spinnerTeam);
 				            btnCompleteRegist = (Button) findViewById( R.id.btnCompleteRegist);
+				            btnCancelReg = (Button) findViewById( R.id.btnCancelReg);
 				            insertTeamList();
 				            getCountryList();
 				            getTeamList();
+				            
+				            // Link to Login Screen
+				            btnCancelReg.setOnClickListener(new View.OnClickListener() { 
+				                public void onClick(View view) {
+				                	
+				                	// get user data from session
+					    		      HashMap<String, String> twitterUser = session.getLoginType();         
+					    		      String loginType = twitterUser.get(SessionManager.KEY_LOGIN_TYPE);				    		      
+					    		      if(loginType.equalsIgnoreCase("facebook")){
+					    		    	  // Close Registration View
+						                	Intent i = new Intent(getApplicationContext(),MainActivity.class);
+								            startActivity(i);
+								            finish();
+					    		      }	
+					    		      else{
+					    		    	  finish();
+					    		      }	
+				                }
+				            });
 				            
 				            btnCompleteRegist.setOnClickListener(new OnClickListener() {
 								
@@ -80,16 +103,20 @@ public class TwitterFacebookRegistration extends Activity {
 					    		        	uid = Secure.getString(getApplicationContext().getContentResolver(), Secure.ANDROID_ID); //use for tablets
 					    		         }  
 					    		        
-					    		      // get user data from session
-					    		      HashMap<String, String> twitterUser = session.getTwitterDetails();         
-					    		      String twitterAccessToken = twitterUser.get(SessionManager.KEY_TWITTER_TOKEN);
-					    		      String twitterNickName = twitterUser.get(SessionManager.KEY_TWITTER_NICK);					    		      
-					    		      if(twitterAccessToken==null){
+					    		      // get user data from session						    							    		      
+					    		      HashMap<String, String> twitterUser = session.getLoginType();         
+					    		      String loginType = twitterUser.get(SessionManager.KEY_LOGIN_TYPE);				    		      
+					    		      if(loginType.equalsIgnoreCase("facebook")){
 					    		    	  twitterUser = session.getFacebookDetails();
-						    		      twitterAccessToken = twitterUser.get(SessionManager.KEY_FACEBOOK_USERNAME);
-						    		      twitterNickName = twitterUser.get(SessionManager.KEY_FACEBOOK_NICKNAME);
+						    		      loginUserName = twitterUser.get(SessionManager.KEY_FACEBOOK_USERNAME);
+						    		      loginNickName = twitterUser.get(SessionManager.KEY_FACEBOOK_NICKNAME);
+					    		      }
+					    		      else{
+					    		    	 twitterUser = session.getTwitterDetails();   
+					    		    	  loginUserName = twitterUser.get(SessionManager.KEY_TWITTER_TOKEN);
+						    		      loginNickName = twitterUser.get(SessionManager.KEY_TWITTER_NICK);
 					    		      }					    		      
-					    		      final UserDTO user = new UserDTO(twitterAccessToken,uid,countrySelected,twitterNickName,"pwd",favTeamId);					   		    	
+					    		      final UserDTO user = new UserDTO(loginUserName,uid,countrySelected,loginNickName,"pwd",favTeamId);					   		    	
 					    		      try {
 					    		    	  if(connectionUtility.hasWifi(getBaseContext())){
 					    		    		  saveUser(user);	    						

@@ -119,7 +119,9 @@ public class RegisterActivity extends Activity {
 				            btnLinkToLogin.setOnClickListener(new View.OnClickListener() { 
 				                public void onClick(View view) {
 				                    // Close Registration View
-				                    finish();
+				                	Intent i = new Intent(getApplicationContext(),MainActivity.class);
+						            startActivity(i);
+						            finish();
 				                }
 				            });
 				            insertTeamList();

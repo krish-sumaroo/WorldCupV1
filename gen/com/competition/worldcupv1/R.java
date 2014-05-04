@@ -234,6 +234,7 @@ containing a value of this type.
         public static final int twitter=0x7f02002f;
     }
     public static final class id {
+        public static final int btnCompleteRegist=0x7f040038;
         public static final int btnFbk=0x7f040024;
         public static final int btnGoogle=0x7f040026;
         public static final int btnLogin=0x7f040021;
@@ -270,6 +271,7 @@ containing a value of this type.
         public static final int imageInfoCountry=0x7f040033;
         public static final int imageInfoUsr=0x7f040031;
         public static final int imageView1=0x7f040032;
+        public static final int imageView2=0x7f040037;
         public static final int large=0x7f040002;
         public static final int logInName=0x7f04001b;
         public static final int normal=0x7f040001;
@@ -279,6 +281,7 @@ containing a value of this type.
         public static final int spinnerTeam=0x7f040030;
         public static final int textView1=0x7f040018;
         public static final int textView2=0x7f04001a;
+        public static final int textView3=0x7f040036;
         public static final int textViewPwd=0x7f04001e;
         public static final int txtCountry=0x7f04002d;
         public static final int txtFavTeam=0x7f04002f;
@@ -307,6 +310,7 @@ containing a value of this type.
         public static final int game_list=0x7f03000e;
         public static final int login=0x7f03000f;
         public static final int register=0x7f030010;
+        public static final int xtra_registration=0x7f030011;
     }
     public static final class string {
         public static final int action_settings=0x7f07001a;
@@ -346,6 +350,7 @@ containing a value of this type.
         public static final int pwd_lost=0x7f070025;
         public static final int register=0x7f070024;
         public static final int remember=0x7f070022;
+        public static final int title_activity_complete_register=0x7f07002b;
         public static final int title_activity_first=0x7f07002a;
         public static final int title_activity_game_list=0x7f07001f;
         public static final int title_activity_login=0x7f07001c;

@@ -28,6 +28,10 @@ public class SessionManager {
     public static final String KEY_NICKNAME = "nickName";    
     public static final String KEY_FAVTEAM = "favTeam";    
     public static final String KEY_COUNTRY = "country";
+    public static final String KEY_TWITTER_TOKEN = "twitterToken";
+    public static final String KEY_TWITTER_NICK = "twitterNick";
+    public static final String KEY_FACEBOOK_USERNAME = "faceBkUsername";
+    public static final String KEY_FACEBOOK_NICKNAME = "faceBkNickname";
      
     // Constructor
     public SessionManager(Context context){
@@ -48,8 +52,39 @@ public class SessionManager {
         editor.putString(KEY_COUNTRY, country);         
         // commit changes
         editor.commit();
+    }
+    
+    /**
+     * Create login session
+     * */
+    public void disableLogin(){
+        // Storing login value as TRUE
+        editor.putBoolean(IS_LOGIN, false); 
+        // commit changes
+        editor.commit();
     }  
-     
+    
+    /**
+     * Create login session
+     * */
+    public void addTwitterLoginSession(String accessToken,String nickName){      
+        editor.putString(KEY_TWITTER_TOKEN, accessToken);
+        editor.putString(KEY_TWITTER_NICK, nickName); 
+        // commit changes
+        editor.commit();
+    }     
+    
+    /**
+     * Create login session
+     * */
+    public void addFacebookLoginSession(String username,String nickName){  
+    	//  editor.putBoolean(IS_LOGIN, true); 
+        editor.putString(KEY_FACEBOOK_USERNAME, username);
+        editor.putString(KEY_FACEBOOK_NICKNAME, nickName); 
+        // commit changes
+        editor.commit();
+    }     
+    
     /**
      * Check login method wil check user login status
      * If false it will redirect user to login page
@@ -80,7 +115,7 @@ public class SessionManager {
     }
      
     /**
-     * Get stored session data
+     * Get normal login stored session data
      * */
     public HashMap<String, String> getUserDetails(){
         HashMap<String, String> user = new HashMap<String, String>();
@@ -89,6 +124,28 @@ public class SessionManager {
         user.put(KEY_NICKNAME, pref.getString(KEY_NICKNAME, null));        
         user.put(KEY_FAVTEAM, String.valueOf(pref.getLong(KEY_FAVTEAM, 0)));        
         user.put(KEY_COUNTRY, pref.getString(KEY_COUNTRY, null));         
+        // return user
+        return user;
+    }
+    
+    /**
+     * Get twitter stored session data
+     * */
+    public HashMap<String, String> getTwitterDetails(){
+        HashMap<String, String> user = new HashMap<String, String>();
+        user.put(KEY_TWITTER_TOKEN, pref.getString(KEY_TWITTER_TOKEN, null));        
+        user.put(KEY_TWITTER_NICK, pref.getString(KEY_TWITTER_NICK, null));
+        // return user
+        return user;
+    }    
+    
+    /**
+     * Get facebook stored session data
+     * */
+    public HashMap<String, String> getFacebookDetails(){
+        HashMap<String, String> user = new HashMap<String, String>();
+        user.put(KEY_FACEBOOK_USERNAME, pref.getString(KEY_FACEBOOK_USERNAME, null));        
+        user.put(KEY_FACEBOOK_NICKNAME, pref.getString(KEY_FACEBOOK_NICKNAME, null));
         // return user
         return user;
     }

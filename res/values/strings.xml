@@ -19,5 +19,5 @@
     <string name="fav_team">Favourite Team</string>
     <string name="default_country">Country</string>
     <string name="title_activity_first">FirstActivity</string>
-
+	<string name="title_activity_complete_register">TwitterFacebookRegistration</string>
 </resources>

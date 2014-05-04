@@ -23,17 +23,16 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.competition.worldcupv1.asynctasks.CheckUserNameTask;
+import com.competition.worldcupv1.asynctasks.CheckUserNameTask.CheckUserNameTaskListener;
 import com.competition.worldcupv1.asynctasks.LoginTask;
 import com.competition.worldcupv1.asynctasks.LoginTask.LoginTaskListener;
 import com.competition.worldcupv1.dto.UserDTO;
@@ -48,25 +47,19 @@ import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
-import com.facebook.model.GraphUser;
 
+@SuppressWarnings("deprecation")
 @SuppressLint("NewApi")
 public class MainActivity extends Activity {	
-	// Your Facebook APP ID
-    private static String APP_ID = "707333179297046"; // Replace your App ID here
- 
-    // Instance of Facebook Class
+	//----------------- FACEBOOK ------------------------
+    private static String APP_ID = "707333179297046";
     private Facebook facebook;
-    @SuppressWarnings("deprecation")
-	private AsyncFacebookRunner mAsyncRunner;
+    private AsyncFacebookRunner mAsyncRunner;
     String FILENAME = "AndroidSSO_data";
     private SharedPreferences mPrefs;
-	
-	// Session Manager Class
     SessionManager session;
  	
 	//----------------- TWITTER ------------------------
-	// Constants
     static String TWITTER_CONSUMER_KEY = "E0iHRkluCMiKQcFGuhMRvErqI";
     static String TWITTER_CONSUMER_SECRET = "NjgLibGPE0lyJL9XiNly0OI6wb1UtTmBLXVmwZ0wqOYFwe1bBE";
  
@@ -81,18 +74,18 @@ public class MainActivity extends Activity {
     static final String URL_TWITTER_AUTH = "auth_url";
     static final String URL_TWITTER_OAUTH_VERIFIER = "oauth_verifier";
     static final String URL_TWITTER_OAUTH_TOKEN = "oauth_token";
- 
-    // Login button
-    Button btnLoginTwitter;
-    // Update status button
-    Button btnLogoutTwitter;
- 
-    // Progress dialog
-    ProgressDialog pDialog;
- 
-    // Twitter
+    
     private static Twitter twitter;
     private static RequestToken requestToken;
+
+    Button btnLoginTwitter;
+    Button btnLoginFbk;
+    ProgressDialog pDialog;
+    private Button btnLogin;
+	private Button btnLinkToRegister;
+	private EditText txtUserName;
+	private EditText txtPassword;
+	UserDTO userDto = null;
      
     // Shared Preferences
     private static SharedPreferences mSharedPreferences;
@@ -102,16 +95,17 @@ public class MainActivity extends Activity {
      
     // Alert Dialog Manager
     AlertDialogManager alert = new AlertDialogManager();
-    
-	private Button btnLogin;
-	private Button btnLinkToRegister;
-	private EditText txtUserName;
-	private EditText txtPassword;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.login);		
+		setContentView(R.layout.login);		   
+        mPrefs = getPreferences(MODE_PRIVATE);
+	
+		// initialise facebook
+		facebook = new Facebook(APP_ID);
+        mAsyncRunner = new AsyncFacebookRunner(facebook);
+                        
 		// Session class instance
         session = new SessionManager(getApplicationContext());		
 		boolean isLoggedIn = session.isLoggedIn();
@@ -126,6 +120,21 @@ public class MainActivity extends Activity {
             getApplicationContext().startActivity(i);
 		}
 		else{
+			//if not already logged in delete facebook token if in session
+			 Editor editorFbk = mPrefs.edit();
+			 editorFbk.remove("access_token");
+			 editorFbk.remove("access_expires");
+			 editorFbk.commit();
+	            
+			// -------------- FACEBOOK ----------------
+			btnLoginFbk = (Button) findViewById(R.id.btnFbk);   
+			btnLoginFbk.setOnClickListener(new View.OnClickListener() {
+			    @Override
+			    public void onClick(View v) {
+			       loginToFacebook();
+			     }
+			});	        		
+			
 			// ------------- TWITTER -------------------			
 			 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -147,8 +156,6 @@ public class MainActivity extends Activity {
 	         }	 
 	         // All UI elements
 	         btnLoginTwitter = (Button) findViewById(R.id.btnLoginTwitter);
-	         btnLogoutTwitter = (Button) findViewById(R.id.btnLogoutTwitter);
-
 	         // Shared Preferences
 	         mSharedPreferences = getApplicationContext().getSharedPreferences("MyPref", 0);
 
@@ -159,13 +166,6 @@ public class MainActivity extends Activity {
 	                loginToTwitter();
 	            }
 	         }); 
-		     btnLogoutTwitter.setOnClickListener(new View.OnClickListener() {		 
-		    	 @Override
-		         public void onClick(View arg0) {
-		    		 // Call logout twitter function
-		             logoutFromTwitter();
-		    	 }
-		     });
 		     if (!isTwitterLoggedInAlready()) {
 	            Uri uri = getIntent().getData();
 	            if (uri != null && uri.toString().startsWith(TWITTER_CALLBACK_URL)) {
@@ -173,32 +173,11 @@ public class MainActivity extends Activity {
 	                String verifier = uri.getQueryParameter(URL_TWITTER_OAUTH_VERIFIER);	 
 	                try {
 	                    // Get the access token
-	                    AccessToken accessToken = twitter.getOAuthAccessToken(requestToken, verifier);	 
-	                    // Shared Preferences
-	                    Editor e = mSharedPreferences.edit();	 
-	                    // After getting access token, access token secret
-	                    // store them in application preferences
-	                    e.putString(PREF_KEY_OAUTH_TOKEN, accessToken.getToken());
-	                    e.putString(PREF_KEY_OAUTH_SECRET,accessToken.getTokenSecret());
-	                    // Store login status - true
-	                    e.putBoolean(PREF_KEY_TWITTER_LOGIN, true);
-	                    e.commit(); // save changes	 
-	                    Log.e("Twitter OAuth Token", "> " + accessToken.getToken());	 
-	                    // Hide login button
-	                    btnLoginTwitter.setVisibility(View.GONE);	 
-	                    // Show Update Twitter
-	                    btnLogoutTwitter.setVisibility(View.VISIBLE);	                     
+	                    AccessToken accessToken = twitter.getOAuthAccessToken(requestToken, verifier);
 	                    // Getting user details from twitter
-	                    // For now i am getting his name only
 	                    long userID = accessToken.getUserId();
-	                    User user = twitter.showUser(userID);
-	                    String username = user.getName();	                     
-	                    // Displaying in xml ui
-	                    Toast.makeText(getApplicationContext(), "Welcome: " + username , Toast.LENGTH_LONG).show();
-	                    Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
-                        // Close all views before launching matchList
-                        matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(matchList);	
+	                    userDto = new UserDTO(String.valueOf(userID), "", "", "", "", 0);
+	                    completeRegistration(userDto, accessToken);
 	                } catch (Exception e) {
 	                    // Check log for login errors
 	                    Log.e("Twitter Login Error", "> " + e.getMessage());
@@ -207,17 +186,17 @@ public class MainActivity extends Activity {
 		     	}
 				if (isTwitterLoggedInAlready()) {
 					Intent gameList = new Intent(getApplicationContext(), GameListActivity.class);
-		            // Close all views before launching matchList
+					//Close all views before launching matchList
 					gameList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		            startActivity(gameList);
 				 }
-				//Importing all assets like buttons, text fields
+				//-------------------- NORMAL -------------------------------
 				txtUserName = (EditText) findViewById(R.id.txt_username);
 			    txtPassword = (EditText) findViewById(R.id.txt_pwd);
 			    btnLogin = (Button) findViewById(R.id.btnLogin);
 			    btnLinkToRegister = (Button) findViewById(R.id.btnRegister);
 			        
-		        // Login button Click Event
+		        // Login button Click Event (normal)
 		        btnLogin.setOnClickListener(new View.OnClickListener() {		 
 		            public void onClick(View view) {
 		            	final ConnectionUtility connectionUtility = new ConnectionUtility();
@@ -238,11 +217,7 @@ public class MainActivity extends Activity {
 		    						connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
 		    							@Override
 		    							public void onInternetEnabled(boolean result) {
-		    								login(user);
-		    								Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
-		                                    // Close all views before launching matchList
-		                                    matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		                                    startActivity(matchList);	    	
+		    								login(user);    	
 		    							}
 		    							@Override
 		    							public void exitApplication(boolean result) {
@@ -263,7 +238,6 @@ public class MainActivity extends Activity {
 			    	public void onClick(View view) {
 			        	Intent i = new Intent(getApplicationContext(),RegisterActivity.class);
 			            startActivity(i);
-			                //finish();
 			            }
 			    });
 			}	 
@@ -291,81 +265,6 @@ public class MainActivity extends Activity {
 	            Toast.makeText(getApplicationContext(), "Already Logged into twitter", Toast.LENGTH_LONG).show();
 	        }
 	    }	 
-	    /**
-	     * Function to update status
-	     * */
-	    class updateTwitterStatus extends AsyncTask<String, String, String> {	 
-	        /**
-	         * Before starting background thread Show Progress Dialog
-	         * */
-	        @Override
-	        protected void onPreExecute() {
-	            super.onPreExecute();
-	            pDialog = new ProgressDialog(MainActivity.this);
-	            pDialog.setMessage("Updating to twitter...");
-	            pDialog.setIndeterminate(false);
-	            pDialog.setCancelable(false);
-	            pDialog.show();
-	        }
-	 
-	        /**
-	         * getting Places JSON
-	         * */
-	        protected String doInBackground(String... args) {
-	            Log.d("Tweet Text", "> " + args[0]);
-	            String status = args[0];
-	            try {
-	                ConfigurationBuilder builder = new ConfigurationBuilder();
-	                builder.setOAuthConsumerKey(TWITTER_CONSUMER_KEY);
-	                builder.setOAuthConsumerSecret(TWITTER_CONSUMER_SECRET);	                 
-	                // Access Token
-	                String access_token = mSharedPreferences.getString(PREF_KEY_OAUTH_TOKEN, "");
-	                // Access Token Secret
-	                String access_token_secret = mSharedPreferences.getString(PREF_KEY_OAUTH_SECRET, "");	                 
-	                AccessToken accessToken = new AccessToken(access_token, access_token_secret);
-	                Twitter twitter = new TwitterFactory(builder.build()).getInstance(accessToken);	                 
-	                // Update status
-	                twitter4j.Status response = twitter.updateStatus(status);	                 
-	                Log.d("Status", "> " + response.getText());
-	            } catch (TwitterException e) {
-	                // Error in updating status
-	                Log.d("Twitter Update Error", e.getMessage());
-	            }
-	            return null;
-	        }
-	 
-	        /**
-	         * After completing background task Dismiss the progress dialog and show
-	         * the data in UI Always use runOnUiThread(new Runnable()) to update UI
-	         * from background thread, otherwise you will get error
-	         * **/
-	        protected void onPostExecute(String file_url) {
-	            // dismiss the dialog after getting all products
-	            pDialog.dismiss();
-	            // updating UI from Background Thread
-	            runOnUiThread(new Runnable() {
-	                @Override
-	                public void run() {
-	                    Toast.makeText(getApplicationContext(),"Status tweeted successfully", Toast.LENGTH_SHORT).show();
-	                    // Clearing EditText field
-	                }
-	            });
-	        }	 
-	    }	 
-	    /**
-	     * Function to logout from twitter
-	     * It will just clear the application shared preferences
-	     * */
-	    private void logoutFromTwitter() {
-	        // Clear the shared preferences
-	        Editor e = mSharedPreferences.edit();
-	        e.remove(PREF_KEY_OAUTH_TOKEN);
-	        e.remove(PREF_KEY_OAUTH_SECRET);
-	        e.remove(PREF_KEY_TWITTER_LOGIN);
-	        e.commit();	 
-	        btnLogoutTwitter.setVisibility(View.GONE);	 
-	        btnLoginTwitter.setVisibility(View.VISIBLE);
-	    }
 	 
 	    /**
 	     * Check user already logged in your application using twitter Login flag is
@@ -380,9 +279,7 @@ public class MainActivity extends Activity {
 	        super.onResume();
 	    }
 	
-	@SuppressWarnings("deprecation")
 	public void loginToFacebook() {		
-		System.out.print("login facebook");		
 	    mPrefs = getPreferences(MODE_PRIVATE);
 	    String access_token = mPrefs.getString("access_token", null);
 	    long expires = mPrefs.getLong("access_expires", 0);	 
@@ -398,119 +295,75 @@ public class MainActivity extends Activity {
             new DialogListener() {	 
 	            @Override
 	            public void onCancel() {
-	            	// Function to handle cancel event
 	            } 
-                @SuppressWarnings("unused")
-				@Override
-			    public void onComplete(Bundle values) {
-			        // Function to handle complete event
-			        // Edit Preferences and update facebook acess_token
-			        SharedPreferences.Editor editor = mPrefs.edit();
-			        editor.putString("access_token",facebook.getAccessToken());
-			        editor.putLong("access_expires",facebook.getAccessExpires());
-			        editor.commit();			        
+                @Override
+			    public void onComplete(Bundle values) {			        
 			        //get Profile INFO
-			        getProfileInformation() ;			        
-//			        //GET FRIEND LIST
-//			        mAsyncRunner.request("me/friends", new FriendsRequestListener());			        
-			        GraphUser user = null ;
-			        if (user != null) {
-			        	Toast.makeText(getApplicationContext(), "HEllo: " + user.getName(), Toast.LENGTH_LONG).show();
-	     	                  }
-	                    }	 
-                    @Override
-                    public void onError(DialogError error) {
-                        // Function to handle error	 
-                    }
- 
-                    @Override
-                    public void onFacebookError(FacebookError fberror) {
-                        // Function to handle Facebook errors	 
-                    }
-	        	});
-	    	}
-		}
+			        getProfileInformation() ;			        			        
+			        //GraphUser user = null ;
+	            }	 
+                @Override
+                public void onError(DialogError error) {
+                    // Function to handle error	 
+                } 
+                @Override
+                public void onFacebookError(FacebookError fberror) {
+                    // Function to handle Facebook errors	 
+                }
+	        });
+	    }
+	}
  	
- 	 /**
- 	  * Get Profile information by making request to Facebook Graph API
- 	  * */
- 	 @SuppressWarnings("deprecation")
- 	 public void getProfileInformation() {
- 		 mAsyncRunner.request("me", new RequestListener() {
- 			 @Override
-		 	 public void onComplete(String response, Object state) {
-		 	 Log.d("Profile", response);
-		 	 String json = response;
-		 	 try {
-		 	 	// Facebook Profile JSON data
+	/**
+	 * Get Profile information by making request to Facebook Graph API
+	* */
+	public void getProfileInformation() {
+		mAsyncRunner.request("me", new RequestListener() {
+			@Override
+		 	public void onComplete(String response, Object state) {
+		 	Log.d("Profile", response);
+		 	String json = response;
+		 	try {
+		 		// Facebook Profile JSON data
 		 	    JSONObject profile = new JSONObject(json); 	     
 		 	    // getting name of the user
-		 	    final String name = profile.getString("name"); 	     
+		 	    final String nickName = profile.getString("name"); 	     
 		 	    // getting email of the user
-		 	    final String email = profile.getString("email"); 	     
+		 	    final String userName = profile.getString("email"); 	     
 		 	    runOnUiThread(new Runnable() {
 		 	    	@Override
-		 	    	public void run() {
-		 	    		Toast.makeText(getApplicationContext(), "Name: " + name + "\nEmail: " + email, Toast.LENGTH_LONG).show();
+		 	    	public void run() {		 	    		
+		 	    		Editor e = mPrefs.edit();
+		 	            e.remove("access_token");
+		 	            e.remove("access_expires");
+		 	            e.commit();
+		 	    		
+		 	            userDto = new UserDTO(userName, "", "", nickName, "", 0);
+		 	            completeRegistrationFacebook(userDto);
 		 	    	}
 		 	    });		 	     
 		 	 } catch (JSONException e) {
 		 	     e.printStackTrace();
-		 	   }
-		 }
- 	   @Override
- 	   public void onIOException(IOException e, Object state) {
- 	   }
- 	   @Override
- 	   public void onFileNotFoundException(FileNotFoundException e,
- 	     Object state) {
- 	   }
- 	   @Override
- 	   public void onFacebookError(FacebookError e, Object state) {
- 	   }
-		@Override
-		public void onMalformedURLException(MalformedURLException e, Object state) {
-			// TODO Auto-generated method stub
-			
-		}
- 	  });
- 	 }
+		 	}
+			}
+	 	   @Override
+	 	   public void onIOException(IOException e, Object state) {
+	 	   }
+	 	   @Override
+	 	   public void onFileNotFoundException(FileNotFoundException e,
+	 	     Object state) {
+	 	   }
+	 	   @Override
+	 	   public void onFacebookError(FacebookError e, Object state) {
+	 	   }
+	 	   @Override
+	 	   public void onMalformedURLException(MalformedURLException e, Object state) {
+			// TODO Auto-generated method stub			
+	 	   }
+		});
+	}
  	 
- 	 @SuppressWarnings("deprecation")
- 	 public void logoutFromFacebook() {
- 	  mAsyncRunner.logout(MainActivity.this, new RequestListener() { 		
- 	   @Override
- 	   public void onComplete(String response, Object state) {
- 	    Log.d("Logout from Facebook", response);
- 	    if (Boolean.parseBoolean(response) == true) {
- 	     runOnUiThread(new Runnable() { 	 
- 	      @Override
- 	      public void run() {
- 	      } 	 
- 	     }); 	 
- 	    }
- 	   }
-
-	@Override
-	public void onIOException(IOException e, Object state) {
-		// TODO Auto-generated method stub		
-	}
-	@Override
-	public void onFileNotFoundException(FileNotFoundException e, Object state) {
-		// TODO Auto-generated method stub		
-	}
-	@Override
-	public void onMalformedURLException(MalformedURLException e, Object state) {
-		// TODO Auto-generated method stub		
-	}
-	@Override
-	public void onFacebookError(FacebookError e, Object state) {
-		// TODO Auto-generated method stub		
-	}
- 	});
- } 	 
- 	 
- 	public void login (UserDTO user){
+ 	public void login (final UserDTO user){
 		LoginTask loginTask = new LoginTask();
 		loginTask.setUser(user);
 		loginTask.setContext(getApplicationContext());
@@ -521,6 +374,7 @@ public class MainActivity extends Activity {
 				if (result != "") {   
                     if (result == "loginSuccess") {				
 						System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> result" + result);
+						session.createLoginSession(user.getUserName(),"","",0,"");
 						Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
 		                // Close all views before launching matchList
 		                matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -537,5 +391,107 @@ public class MainActivity extends Activity {
                }				
 			}
 		});
-	} 
-}	
+	}
+ 	
+	public void completeRegistration (final UserDTO user, final AccessToken accessToken){
+		CheckUserNameTask checkUserNameTask = new CheckUserNameTask();
+        checkUserNameTask.setUser(user);
+        checkUserNameTask.setContext(getApplicationContext());
+        checkUserNameTask.execute();        
+        checkUserNameTask.setCheckUserNameTaskListener(new CheckUserNameTaskListener() {			
+			@Override
+			public void onComplete(String result) {
+				if (result != "") {   
+                    if (result.equalsIgnoreCase("userNameExist")) {
+						 Editor e = mSharedPreferences.edit();	 
+		                    // After getting access token, access token secret
+		                    // store them in application preferences
+		                    e.putString(PREF_KEY_OAUTH_TOKEN, accessToken.getToken());
+		                    e.putString(PREF_KEY_OAUTH_SECRET,accessToken.getTokenSecret());
+		                    // Store login status - true
+		                    e.putBoolean(PREF_KEY_TWITTER_LOGIN, true);
+		                    e.commit(); // save changes	 
+		                    
+		                    long userID = accessToken.getUserId();
+		                    User user = null;
+							try {
+								user = twitter.showUser(userID);
+							} catch (TwitterException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+		                    String nickname = user.getName();
+		                    userDto = new UserDTO(String.valueOf(userID), "", "", nickname, "", 0);
+		                    session.createLoginSession(String.valueOf(userID), "", nickname, 0, "");		                    
+							Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
+			                // Close all views before launching matchList
+			                matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			                startActivity(matchList);                
+			                // Close match list View
+			                finish();
+		             	}
+                    else{
+                    	 long userID = accessToken.getUserId();
+		                    User user = null;
+							try {
+								user = twitter.showUser(userID);
+							} catch (TwitterException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+		                    String nickname = user.getName();	  
+		                    session.addTwitterLoginSession(String.valueOf(userID), nickname);
+	                    	Intent completeRegistration = new Intent(getApplicationContext(), TwitterFacebookRegistration.class);
+			                // Close all views before launching matchList
+	                    	completeRegistration.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			                startActivity(completeRegistration);                
+			                // Close match list View
+			                finish();
+                    	}
+					}
+				else{
+                    // Error in registration
+					Toast.makeText(getApplicationContext(), "Error occured in registration", Toast.LENGTH_LONG).show(); 
+               }				
+			}
+		});
+	}
+	
+	public void completeRegistrationFacebook (final UserDTO user){
+		CheckUserNameTask checkUserNameTask = new CheckUserNameTask();
+        checkUserNameTask.setUser(user);
+        checkUserNameTask.setContext(getApplicationContext());
+        checkUserNameTask.execute();        
+        checkUserNameTask.setCheckUserNameTaskListener(new CheckUserNameTaskListener() {			
+			@Override
+			public void onComplete(String result) {
+				if (result != "") {   
+                    if (result.equalsIgnoreCase("userNameExist")) {				
+						System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> result" + result);		                    
+	                    userDto = new UserDTO(user.getUserName(), "", "", user.getNickName(), "", 0);		                    
+	                    session.createLoginSession(user.getUserName(), "", user.getNickName(), 0, "");		                    
+						Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
+		                // Close all views before launching matchList
+		                matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		                startActivity(matchList);                
+		                // Close match list View
+		                finish();
+		             }
+                    else{  
+		                session.addFacebookLoginSession(user.getUserName(), user.getNickName());
+                    	Intent completeRegistration = new Intent(getApplicationContext(), TwitterFacebookRegistration.class);
+		                // Close all views before launching matchList
+                    	completeRegistration.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		                startActivity(completeRegistration);                
+		                // Close match list View
+		                finish();
+                    }
+				}
+				else{
+                    // Error in registration
+					Toast.makeText(getApplicationContext(), "Error occured in registration", Toast.LENGTH_LONG).show(); 
+               }				
+			}
+		});
+	}
+}

@@ -75,4 +75,27 @@ public class WebServiceHelper {
         }
 		return result;
 	}
+	
+	//login
+		public String checkUserName(Context context, UserDTO user) throws ClientProtocolException, IOException, JSONException{
+			String url = "users/checkUsername/";
+			String result="";
+	      
+	    	// Add data
+	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(6);
+	        nameValuePairs.add(new BasicNameValuePair("username", user.getUserName()));
+	        
+	        //use the generic list fn to post JSON obj
+			WebServiceUtility webServiceUtility = new WebServiceUtility();
+			JSONObject jObject = webServiceUtility.postData(nameValuePairs, url);			
+			System.out.println(">>>>>>>>>>>>>>> result login = " +jObject.getString("status") );
+			
+	        if(jObject.getString("status").equals("true")){  	
+	        	result= "userNameNotExist";
+	        }else{
+	        	Log.d("status:","false");
+	        	result= "userNameExist";
+	        }
+			return result;
+		}
 }

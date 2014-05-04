@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings.Secure;
 import android.telephony.TelephonyManager;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -41,9 +40,7 @@ public class RegisterActivity extends Activity {
 	private EditText txtPassword;
     private Spinner countryList;
     private Spinner favTeamList;    
-    private Thread mSplashThread;
-    
-    // Session Manager Class
+    private Thread thread;
     SessionManager session;
 
 	@Override
@@ -52,7 +49,7 @@ public class RegisterActivity extends Activity {
 		setContentView(R.layout.register);		
 		//Session Manager
         session = new SessionManager(getApplicationContext());
-		mSplashThread = new Thread() {    
+		thread = new Thread() {    
 	        public void run() {
 	            try {
 	            	runOnUiThread(new Runnable() {  
@@ -102,11 +99,7 @@ public class RegisterActivity extends Activity {
 					    						connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
 					    							@Override
 					    							public void onInternetEnabled(boolean result) {
-					    								saveUser(user);	    								 
-					    								Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
-					                                    // Close all views before launching matchList
-					                                    matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					                                    startActivity(matchList);	    	
+					    								saveUser(user);
 					    							}
 					    							@Override
 					    							public void exitApplication(boolean result) {
@@ -125,8 +118,6 @@ public class RegisterActivity extends Activity {
 				            // Link to Login Screen
 				            btnLinkToLogin.setOnClickListener(new View.OnClickListener() { 
 				                public void onClick(View view) {
-				                    //Intent i = new Intent(getApplicationContext(),LoginActivity.class);
-				                    //startActivity(i);
 				                    // Close Registration View
 				                    finish();
 				                }
@@ -134,7 +125,6 @@ public class RegisterActivity extends Activity {
 				            insertTeamList();
 				            getCountryList();
 				            getTeamList();
-
 	                    }
 	                });
 	            } catch (Exception e) {
@@ -143,7 +133,7 @@ public class RegisterActivity extends Activity {
 	        }
 		};
 	    // start thread
-	    mSplashThread.start();
+	    thread.start();
 	}
 
 	public void saveUser (final UserDTO user){

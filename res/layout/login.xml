@@ -1,0 +1,114 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background" >
+
+    <TextView
+        android:id="@+id/txtViewUserN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/username" />
+
+    <EditText
+        android:id="@+id/txt_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtViewUserN"
+        android:layout_alignBottom="@+id/txtViewUserN"
+        android:layout_alignParentRight="true"
+        android:ems="10" />
+
+    <TextView
+        android:id="@+id/textViewPwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtViewUserN"
+        android:layout_below="@+id/txt_username"
+        android:layout_marginTop="37dp"
+        android:text="@string/pwd" />
+
+    <EditText
+        android:id="@+id/txt_pwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textViewPwd"
+        android:layout_alignBottom="@+id/textViewPwd"
+        android:layout_alignLeft="@+id/txt_username"
+        android:inputType="textPassword" 
+        android:ems="10" />
+
+    <CheckBox
+        android:id="@+id/chkRemeber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt_pwd"
+        android:layout_marginTop="38dp"
+        android:layout_toRightOf="@+id/txtViewUserN"
+        android:text="@string/remember" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"
+        android:layout_alignLeft="@+id/textViewPwd"
+        android:layout_below="@+id/chkRemeber"
+        android:layout_marginTop="17dp"
+        android:text="@string/login" />
+
+    <Button
+        android:id="@+id/btnRegister"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"
+        android:layout_alignLeft="@+id/txt_pwd"
+        android:layout_alignTop="@+id/btnLogin"
+        android:text="@string/register" />
+
+    <Button
+        android:id="@+id/btnLostPwd"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"
+        android:layout_alignLeft="@+id/btnLogin"
+        android:layout_below="@+id/btnLogin"
+        android:layout_marginTop="26dp"
+        android:text="@string/pwd_lost" />
+
+    <Button
+        android:id="@+id/btnFbk"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="68dp"
+        android:layout_height="28dp"
+        android:layout_alignLeft="@+id/btnLostPwd"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/button_image_fbk"
+        android:text="" />
+
+    <Button
+        android:id="@+id/btnLoginTwitter"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_alignBaseline="@+id/btnFbk"
+        android:layout_alignBottom="@+id/btnFbk"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button_image_twitter"
+        android:text="" />
+
+    <Button
+        android:id="@+id/btnGoogle"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_alignBaseline="@+id/btnLoginTwitter"
+        android:layout_alignBottom="@+id/btnLoginTwitter"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/button_image_google" />
+
+</RelativeLayout>

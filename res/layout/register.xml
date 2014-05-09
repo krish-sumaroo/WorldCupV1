@@ -1,0 +1,137 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:background="@drawable/background" >
+
+    <TextView
+        android:id="@+id/txtRegUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="22dp"
+        android:text="@string/username" />
+
+    <TextView
+        android:id="@+id/txtRegPwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtRegUserName"
+        android:layout_below="@+id/editTextRegUsrName"
+        android:layout_marginTop="42dp"
+        android:text="@string/pwd" />
+
+    <EditText
+        android:id="@+id/editTextPwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtRegPwd"
+        android:layout_alignBottom="@+id/txtRegPwd"
+        android:layout_alignLeft="@+id/editTextRegUsrName"
+        android:ems="8"
+        android:inputType="textPassword" />
+
+    <TextView
+        android:id="@+id/txtRegNickName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtRegPwd"
+        android:layout_below="@+id/editTextPwd"
+        android:layout_marginTop="48dp"
+        android:text="@string/nick_name" />
+
+    <EditText
+        android:id="@+id/editTextNickName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/txtRegNickName"
+        android:layout_alignLeft="@+id/editTextPwd"
+        android:ems="8" />
+
+    <TextView
+        android:id="@+id/txtCountry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtRegNickName"
+        android:layout_centerVertical="true"
+        android:text="@string/country" />
+
+    <Spinner
+        android:id="@+id/spinnerCountry"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_alignRight="@+id/editTextNickName"
+        android:layout_alignTop="@+id/txtCountry" 
+        android:prompt="@string/default_country"/>
+
+    <TextView
+        android:id="@+id/txtFavTeam"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtCountry"
+        android:layout_below="@+id/spinnerCountry"
+        android:layout_marginTop="30dp"
+        android:text="@string/fav_team" />
+
+    <Spinner
+        android:id="@+id/spinnerTeam"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_alignRight="@+id/editTextPwd"
+        android:layout_alignTop="@+id/txtFavTeam" />
+
+     <ImageView
+         android:id="@+id/imageInfoUsr"
+         android:layout_width="20dp"
+         android:layout_height="20dp"
+         android:layout_alignParentRight="true"
+         android:layout_alignTop="@+id/txtRegUserName"
+         android:src="@drawable/info" />
+
+     <ImageView
+         android:id="@+id/imageInfoTeam"
+         android:layout_width="20dp"
+         android:layout_height="20dp"
+         android:layout_alignParentRight="true"
+         android:layout_below="@+id/txtFavTeam"
+         android:src="@drawable/info" />
+
+     <ImageView
+         android:id="@+id/imageInfoCountry"
+         android:layout_width="20dp"
+         android:layout_height="20dp"
+         android:layout_alignParentRight="true"
+         android:layout_below="@+id/txtCountry"
+         android:src="@drawable/info" />
+
+     <EditText
+         android:id="@+id/editTextRegUsrName"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignBaseline="@+id/txtRegUserName"
+         android:layout_alignBottom="@+id/txtRegUserName"
+         android:layout_toLeftOf="@+id/imageInfoUsr"
+         android:ems="8" >
+
+         <requestFocus />
+     </EditText>
+
+     <Button
+         android:id="@+id/btnRegisterCancel"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentBottom="true"
+         android:layout_alignRight="@+id/txtCountry"
+         android:text="Cancel" />
+
+     <Button
+         android:id="@+id/btnRegisterSave"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentBottom="true"
+         android:layout_alignRight="@+id/spinnerCountry"
+         android:layout_marginRight="16dp"
+         android:text="Register" />
+
+</RelativeLayout>

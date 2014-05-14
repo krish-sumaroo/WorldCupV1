@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +19,7 @@ import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,19 +28,36 @@ import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v4.widget.SlidingPaneLayout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.competition.worldcupv1.asynctasks.CheckUserNameTask;
+import com.competition.worldcupv1.asynctasks.CreatePlayerListTask;
+import com.competition.worldcupv1.asynctasks.CreateUserTask;
 import com.competition.worldcupv1.asynctasks.CheckUserNameTask.CheckUserNameTaskListener;
+import com.competition.worldcupv1.asynctasks.CreatePlayerListTask.CreatePlayerListTaskListener;
+import com.competition.worldcupv1.asynctasks.CreateTeamListTask;
+import com.competition.worldcupv1.asynctasks.CreateTeamListTask.CreateTeamListTaskListener;
+import com.competition.worldcupv1.asynctasks.CreateUserTask.CreateUserTaskListener;
 import com.competition.worldcupv1.asynctasks.LoginTask;
 import com.competition.worldcupv1.asynctasks.LoginTask.LoginTaskListener;
+import com.competition.worldcupv1.asynctasks.LostPwdTask;
+import com.competition.worldcupv1.asynctasks.LostPwdTask.CreateLostPwdTaskListener;
+import com.competition.worldcupv1.dto.PlayerDTO;
+import com.competition.worldcupv1.dto.TeamDTO;
 import com.competition.worldcupv1.dto.UserDTO;
+import com.competition.worldcupv1.fragment.TeamPlayersOneFrag;
+import com.competition.worldcupv1.fragment.TeamPlayersTwoFrag;
+import com.competition.worldcupv1.fragment.trial.Player;
+import com.competition.worldcupv1.service.GameService;
+import com.competition.worldcupv1.service.TeamService;
 import com.competition.worldcupv1.utils.AlertDialogManager;
 import com.competition.worldcupv1.utils.ConnectionDetector;
 import com.competition.worldcupv1.utils.ConnectionUtility;
@@ -90,20 +109,37 @@ public class MainActivity extends Activity {
 	private EditText txtPassword;
 	UserDTO userDto = null;
 	private CheckBox rememberMe;
+	private Thread thread;
+	private Button btnLostPwd;
      
     // Shared Preferences
     private static SharedPreferences mSharedPreferences;
-     
+    
+    // Shared Preferences
+    private static SharedPreferences applFirstRunPref;
+    
     // Internet Connection detector
     private ConnectionDetector cd;
      
     // Alert Dialog Manager
     AlertDialogManager alert = new AlertDialogManager();
+    TeamService teamService = new TeamService();
+    Dialog dialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.login);		   
+		setContentView(R.layout.login);	
+		applFirstRunPref = getApplicationContext().getSharedPreferences("applFirstRunPref", 0);
+		boolean firstTime = applFirstRunPref.getBoolean("firstTime", true);
+		if (firstTime) { 
+		    SharedPreferences.Editor editor = applFirstRunPref.edit();
+		    editor.putBoolean("firstTime", false);
+		    editor.commit();
+		    populateTableTeam();	    
+		    System.out.println("================================ first time load appl");	    
+		}
+				
         mPrefs = getPreferences(MODE_PRIVATE);
 		// Session class instance
         session = new SessionManager(getApplicationContext());	
@@ -201,6 +237,7 @@ public class MainActivity extends Activity {
 			    btnLogin = (Button) findViewById(R.id.btnLogin);
 			    btnLinkToRegister = (Button) findViewById(R.id.btnRegister);
 			    rememberMe = (CheckBox) findViewById(R.id.chkRemeber);
+			    btnLostPwd = (Button) findViewById(R.id.btnLostPwd);
 			        
 		        // Login button Click Event (normal)
 		        btnLogin.setOnClickListener(new View.OnClickListener() {		 
@@ -247,6 +284,51 @@ public class MainActivity extends Activity {
 			        	Intent i = new Intent(getApplicationContext(),RegisterActivity.class);
 			            startActivity(i);
 			            finish();
+			            }
+			    });
+			    
+			    // Link to Register Screen
+			    btnLostPwd.setOnClickListener(new View.OnClickListener() {			 
+			    	public void onClick(View view) {
+			    		// Create custom dialog object
+		                dialog = new Dialog(MainActivity.this);
+		                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		                dialog.setCanceledOnTouchOutside(false);
+		                // Include dialog.xml file
+		                dialog.setContentView(R.layout.lost_password);	
+		                
+		                Button cancle_btn = (Button) dialog.findViewById(R.id.btbPwdCancel);
+		                cancle_btn.setOnClickListener(new View.OnClickListener() 
+		                {
+
+							@Override
+							public void onClick(View v) {
+								 // Perform button logic
+			                    dialog.dismiss();								
+							}
+		                   
+		                });
+		                
+		                Button send_pwd_btn = (Button) dialog.findViewById(R.id.btnPwdSave);
+		                final EditText editTextLostPwd = (EditText) dialog.findViewById(R.id.editTextLostPwd);		                
+		                send_pwd_btn.setOnClickListener(new View.OnClickListener() 
+		                {
+							@Override
+							public void onClick(View v) {
+								String email = editTextLostPwd.getText().toString();
+					                
+								if(( email.length() == 0 || email.equals("") || email == null)){
+									Toast toast = Toast.makeText(MainActivity.this,"Enter your email address", Toast.LENGTH_LONG);
+			    	            	toast.setGravity(Gravity.CENTER, 0, 0);
+			    	            	toast.show();	
+								}
+								else{
+									sendEmailLostPwd(email);
+								}
+							}
+		                   
+		                });
+		                dialog.show();
 			            }
 			    });
 			}	 
@@ -397,12 +479,16 @@ public class MainActivity extends Activity {
 		                // Close match list View
 		                finish();
 		             }else{
-		            	 Toast.makeText(getApplicationContext(), "Credentials not ok", Toast.LENGTH_LONG).show(); 
+		            	Toast toast = Toast.makeText(MainActivity.this,"Credentials not ok", Toast.LENGTH_LONG);
+		            	toast.setGravity(Gravity.CENTER, 0, 0);
+		            	toast.show();		            	
 		             }
 				}
 				else{
                     // Error in registration
-					Toast.makeText(getApplicationContext(), "Error occured in login", Toast.LENGTH_LONG).show(); 
+					Toast toast = Toast.makeText(MainActivity.this,"Error occured in login", Toast.LENGTH_LONG);
+	            	toast.setGravity(Gravity.CENTER, 0, 0);
+	            	toast.show();					 
                }				
 			}
 		});
@@ -467,7 +553,9 @@ public class MainActivity extends Activity {
 					}
 				else{
                     // Error in registration
-					Toast.makeText(getApplicationContext(), "Error occured in registration", Toast.LENGTH_LONG).show(); 
+					Toast toast = Toast.makeText(MainActivity.this,"Error occured in registration", Toast.LENGTH_LONG);
+	            	toast.setGravity(Gravity.CENTER, 0, 0);
+	            	toast.show();					
                }				
 			}
 		});
@@ -506,9 +594,49 @@ public class MainActivity extends Activity {
 				}
 				else{
                     // Error in registration
-					Toast.makeText(getApplicationContext(), "Error occured in registration", Toast.LENGTH_LONG).show(); 
+					Toast toast = Toast.makeText(MainActivity.this,"Error occured in registration", Toast.LENGTH_LONG);
+	            	toast.setGravity(Gravity.CENTER, 0, 0);
+	            	toast.show();	
+					
                }				
 			}
 		});
+	}
+	
+	public void  populateTableTeam (){
+		CreateTeamListTask populateTeamTask = new CreateTeamListTask();
+		populateTeamTask.setContext(getApplicationContext());
+		populateTeamTask.execute();        
+		populateTeamTask.setCreateTeamListTaskListener(new CreateTeamListTaskListener() {			
+			@Override
+			public void onComplete(List<TeamDTO> result) {
+				teamService.insertTeamsData(getApplicationContext(), result);				
+			}});	
+		}
+	
+	public void sendEmailLostPwd (final String email){
+		LostPwdTask lossPwdTask = new LostPwdTask();
+        lossPwdTask.setEmail(email);
+        lossPwdTask.setContext(getApplicationContext());
+        lossPwdTask.execute();        
+        lossPwdTask.setCreateLostPwdTaskListener(new CreateLostPwdTaskListener() {
+
+			@Override
+			public void onComplete(String result) {
+				if (result != "") {   
+                    if (result.equalsIgnoreCase("emailSend")) {	
+                    	Toast toast = Toast.makeText(MainActivity.this,"Email send", Toast.LENGTH_LONG);
+    	            	toast.setGravity(Gravity.CENTER, 0, 0);
+    	            	toast.show();	    	            	
+    	            	dialog.dismiss();	
+                    }
+                    else{
+                    	Toast toast = Toast.makeText(MainActivity.this,"There has been a problem. Please Try later", Toast.LENGTH_LONG);
+    	            	toast.setGravity(Gravity.CENTER, 0, 0);
+    	            	toast.show();	 
+                    }
+				}
+			}	
+        });
 	}
 }

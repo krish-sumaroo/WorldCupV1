@@ -18,20 +18,22 @@ public class WebServiceUtility {
 	//private static final String webServiceURL = "http://10.0.2.2/WorldCup_web/index.php/resource/"; 
 	private static final String webServiceURL = "http://54.85.111.97/wc/master/index.php/";
 	
-	public JSONArray  extractList(String listUrl) throws ClientProtocolException, IOException, JSONException {
+	public JSONObject  extractList(String listUrl) throws ClientProtocolException, IOException, JSONException {
 		JSONArray jArray = null;
+		JSONObject object = null;
 		String url = webServiceURL+listUrl;
 		HttpClient httpclient = new DefaultHttpClient();
 		try{
 			HttpPost httppost = new HttpPost(url);
 	        ResponseHandler<String> responseHandler = new BasicResponseHandler();
 	        String responseBody = httpclient.execute(httppost, responseHandler);
-	        jArray = new JSONArray(responseBody);
+	        object = new JSONObject(responseBody);
+	       // jArray = new JSONArray(responseBody);
 			}
 		finally{
         	httpclient.getConnectionManager().shutdown();
         }
-		return jArray;		
+		return object;		
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

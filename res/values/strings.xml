@@ -20,4 +20,6 @@
     <string name="default_country">Country</string>
     <string name="title_activity_first">FirstActivity</string>
 	<string name="title_activity_complete_register">TwitterFacebookRegistration</string>
+	<string name="action_menu">Main menu</string>
+	<string name="action_menu_logout">Logout</string>
 </resources>

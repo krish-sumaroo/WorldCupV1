@@ -119,7 +119,7 @@ public class TwitterFacebookRegistration extends Activity {
 					    		    	  loginUserName = twitterUser.get(SessionManager.KEY_TWITTER_TOKEN);
 						    		      loginNickName = twitterUser.get(SessionManager.KEY_TWITTER_NICK);
 					    		      }					    		      
-					    		      final UserDTO user = new UserDTO(loginUserName,uid,countrySelected,loginNickName,"pwd",favTeamId);					   		    	
+					    		      final UserDTO user = new UserDTO(loginUserName,uid,countrySelected,loginNickName,"",favTeamId);					   		    	
 					    		      try {
 					    		    	  if(connectionUtility.hasWifi(getBaseContext())){
 					    		    		  saveUser(user);	    						
@@ -156,14 +156,15 @@ public class TwitterFacebookRegistration extends Activity {
 	}
 	
 	public void getCountryList(){		
-		Locale[] locales = Locale.getAvailableLocales();
-        ArrayList<String> countries = new ArrayList<String>();
-        for (Locale locale : locales) {
-            String country = locale.getDisplayCountry();
-            if (country.trim().length()>0 && !countries.contains(country)) {
-                countries.add(country);
-            }
-        }
+		ArrayList<String> countries = new ArrayList<String>();
+		String[] isoCountries = Locale.getISOCountries();
+		 for (String country : isoCountries) {
+	            Locale locale = new Locale("en", country);
+	            String name = locale.getDisplayCountry();
+	            if (!"".equals(name)) {
+	            	countries.add(name);
+	            }
+	        }
         Collections.sort(countries);
         ArrayList<String> countriesSorted = new ArrayList<String>();
         countriesSorted.add("Country");
@@ -181,7 +182,7 @@ public class TwitterFacebookRegistration extends Activity {
         listFavTeam = teamService.getTeamName(getApplicationContext());        
         ArrayList<TeamDTO> teamList = new ArrayList<TeamDTO>();
         TeamDTO defaultTeam = new TeamDTO();
-        defaultTeam.setTeamName("Team");
+        defaultTeam.setName("Team");
         teamList.add(defaultTeam);
         teamList.addAll(listFavTeam);
         
@@ -191,8 +192,8 @@ public class TwitterFacebookRegistration extends Activity {
         favTeamList.setAdapter(spinnerArrayAdapter);
 	}	
 	public void insertTeamList(){
-        TeamService teamService = new TeamService();
-        teamService.insertTeamsData(TwitterFacebookRegistration.this);
+       // TeamService teamService = new TeamService();
+       // teamService.insertTeamsData(TwitterFacebookRegistration.this);
 	}
 
 	public void saveUser (final UserDTO user){

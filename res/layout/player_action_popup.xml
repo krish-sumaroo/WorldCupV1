@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="350dp"
+    android:layout_height="fill_parent" >
+
+    <TextView
+        android:id="@+id/txtScoreTeam1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnGoal"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="18dp"
+        android:layout_marginTop="27dp"
+        android:text="Team1" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtScoreTeam1"
+        android:layout_alignBottom="@+id/txtScoreTeam1"
+        android:layout_toRightOf="@+id/btnGoal"
+        android:text="VS"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <EditText
+        android:id="@+id/editScore1"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtScoreTeam1"
+        android:layout_below="@+id/textView2"
+        android:ems="10"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/editScore2"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/txtScoreTeam2"
+        android:layout_below="@+id/txtScoreTeam2"
+        android:ems="10"
+        android:inputType="number" />
+
+    <ImageView
+        android:id="@+id/btnGoal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/editScore1"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/goal" />
+
+    <ImageView
+        android:id="@+id/btnRedCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnGoal"
+        android:layout_below="@+id/btnYelloCard"
+        android:layout_marginTop="28dp"
+        android:src="@drawable/redcard" />
+
+    <Button
+        android:id="@+id/btnAddScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnSubstitute"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="22dp"
+        android:text="Add prediction" />
+
+    <TextView
+        android:id="@+id/txtScoreTeam2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView2"
+        android:layout_toRightOf="@+id/btnAddScore"
+        android:text="Team2" />
+
+    <ImageView
+        android:id="@+id/btnSubstitute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/btnRedCard"
+        android:layout_marginLeft="41dp"
+        android:layout_toRightOf="@+id/textView2"
+        android:src="@drawable/substitute" />
+
+    <ImageView
+        android:id="@+id/btnYelloCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btnGoal"
+        android:layout_alignRight="@+id/btnSubstitute"
+        android:src="@drawable/yellowcard" />
+
+</RelativeLayout>

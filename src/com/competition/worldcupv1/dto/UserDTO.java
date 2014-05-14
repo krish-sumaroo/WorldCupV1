@@ -11,6 +11,7 @@ public class UserDTO implements Serializable{
 	private String nickName;
 	private String password;
 	private long favTeam;
+	private String regId;
 		
 	public UserDTO(){}
 
@@ -71,6 +72,14 @@ public class UserDTO implements Serializable{
 
 	public void setCountry(String country) {
 		this.country = country;
+	}
+
+	public String getRegId() {
+		return regId;
+	}
+
+	public void setRegId(String regId) {
+		this.regId = regId;
 	}
 		
 }

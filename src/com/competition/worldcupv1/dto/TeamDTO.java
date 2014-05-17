@@ -10,48 +10,75 @@ import java.io.Serializable;
 public class TeamDTO implements Serializable{
 	
 	private Integer teamId;
-	private String teamName;
-	private String countryCode;
-	private String coach;
+	private String name;
+	private String flag;
+	private String group;
 	
 	public TeamDTO (){}
 	
-	public TeamDTO(String teamName, String countryCode, String coach) {
-        super();
-        this.teamName = teamName;
-        this.countryCode = countryCode;
-        this.coach = coach;
-    }
+
 	
+	public TeamDTO(Integer teamId, String name, String flag, String group) {
+		super();
+		this.teamId = teamId;
+		this.name = name;
+		this.flag = flag;
+		this.group = group;
+	}
+
+
+
 	public Integer getTeamId() {
 		return teamId;
 	}
+
+
+
 	public void setTeamId(Integer teamId) {
 		this.teamId = teamId;
 	}
-	public String getTeamName() {
-		return teamName;
-	}
-	public void setTeamName(String teamName) {
-		this.teamName = teamName;
-	}
-	public String getCountryCode() {
-		return countryCode;
-	}
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
-	}
-	public String getCoach() {
-		return coach;
+
+
+
+	public String getName() {
+		return name;
 	}
 
-	public void setCoach(String coach) {
-		this.coach = coach;
+
+
+	public void setName(String name) {
+		this.name = name;
 	}
-	
+
+
+
+	public String getFlag() {
+		return flag;
+	}
+
+
+
+	public void setFlag(String flag) {
+		this.flag = flag;
+	}
+
+
+
+	public String getGroup() {
+		return group;
+	}
+
+
+
+	public void setGroup(String group) {
+		this.group = group;
+	}
+
+
+
 	@Override
 	public String toString() {
-	    return this.teamName;
+	    return this.name;
 	}
 	
 }

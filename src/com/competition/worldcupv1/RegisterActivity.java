@@ -2,14 +2,23 @@ package com.competition.worldcupv1;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.Settings.Secure;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,14 +30,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.competition.worldcupv1.asynctasks.CreateGameInfoTask;
+import com.competition.worldcupv1.asynctasks.CreateGameInfoTask.CreateGameInfoTaskListener;
 import com.competition.worldcupv1.asynctasks.CreateUserTask;
 import com.competition.worldcupv1.asynctasks.CreateUserTask.CreateUserTaskListener;
+import com.competition.worldcupv1.asynctasks.GetRegistrationIdTask;
+import com.competition.worldcupv1.asynctasks.GetRegistrationIdTask.GetRegistrationIdTaskListener;
+import com.competition.worldcupv1.dto.GameDTO;
 import com.competition.worldcupv1.dto.TeamDTO;
 import com.competition.worldcupv1.dto.UserDTO;
 import com.competition.worldcupv1.service.TeamService;
 import com.competition.worldcupv1.utils.ConnectionUtility;
 import com.competition.worldcupv1.utils.ConnectionUtility.ConnectionUtilityListener;
 import com.competition.worldcupv1.utils.SessionManager;
+import com.google.android.gcm.GCMRegistrar;
 
 public class RegisterActivity extends Activity {
 	Button btnRegister;
@@ -47,11 +62,15 @@ public class RegisterActivity extends Activity {
     ImageView imageInfoUsr;
     ImageView imageInfoCountry;
     ImageView imageInfoTeam;
+    
+    // Asyntask
+    AsyncTask<Void, Void, Void> mRegisterTask;
+	private ProgressDialog progressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.register);		
+		setContentView(R.layout.register);	
 		//Session Manager
         session = new SessionManager(getApplicationContext());
 		thread = new Thread() {    
@@ -72,6 +91,7 @@ public class RegisterActivity extends Activity {
 				            imageInfoTeam = (ImageView) findViewById( R.id.imageInfoTeam);				            
 				            
 				            btnRegisterUser.setOnClickListener(new OnClickListener() {	
+								@SuppressWarnings("unused")
 								@Override
 								public void onClick(View v) {						
 									String country = countryList.getSelectedItem().toString();
@@ -84,7 +104,16 @@ public class RegisterActivity extends Activity {
 					            		toast.show();
 					                }
 					            	else{
-					                	final String userName = txtUserName.getText().toString();
+					            		final String userName = txtUserName.getText().toString();
+					            		
+					                    if(!checkEmailCorrect(userName)){
+					                    	Toast toast = Toast.makeText(RegisterActivity.this,"Invalid Email Addresss", Toast.LENGTH_LONG);
+					                    	toast.setGravity(Gravity.CENTER, 0, 0);
+					                    	toast.show();
+					                    }
+					                    else
+					                    {
+					                	
 					                	final String nickName = txtNickName.getText().toString();
 					                	final String password = txtPassword.getText().toString();
 					                	final String countrySelected = countryList.getSelectedItem().toString();
@@ -98,10 +127,13 @@ public class RegisterActivity extends Activity {
 					    		         }
 					    		        else{
 					    		        	uid = Secure.getString(getApplicationContext().getContentResolver(), Secure.ANDROID_ID); //use for tablets
-					    		         }   		    	
-					    		    	final UserDTO user = new UserDTO(userName,uid,countrySelected,nickName,password,favTeamId);					   		    	
+					    		         }  
+					    		        					    		    	
+					    		    	final UserDTO user = new UserDTO(userName,uid,countrySelected,nickName,password,favTeamId,"");					   		    	
 					    		    	try {
 					    					if(connectionUtility.hasWifi(getBaseContext())){
+					    						progressDialog = new ProgressDialog(RegisterActivity.this);
+					    						progressDialog.setMessage("Loading ...");
 					    						saveUser(user);	    						
 					    					}
 					    					else{
@@ -109,6 +141,8 @@ public class RegisterActivity extends Activity {
 					    						connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
 					    							@Override
 					    							public void onInternetEnabled(boolean result) {
+					    								progressDialog = new ProgressDialog(RegisterActivity.this);
+					    								progressDialog.setMessage("Loading ...");
 					    								saveUser(user);
 					    							}
 					    							@Override
@@ -122,9 +156,10 @@ public class RegisterActivity extends Activity {
 										finally{											
 										}            
 					                }
+					            	}
 								}
-							});	
-				            
+							});					            
+					    	
 				            imageInfoUsr.setOnClickListener(new View.OnClickListener() { 
 				                public void onClick(View view) {
 				                	Toast toast = Toast.makeText(RegisterActivity.this,"Please enter your email address", Toast.LENGTH_LONG);
@@ -158,7 +193,6 @@ public class RegisterActivity extends Activity {
 						            finish();
 				                }
 				            });
-				            insertTeamList();
 				            getCountryList();
 				            getTeamList();
 	                    }
@@ -180,6 +214,7 @@ public class RegisterActivity extends Activity {
         createUserTask.setcreateUserTaskListener(new CreateUserTaskListener() {			
 			@Override
 			public void onComplete(String result) {
+				progressDialog.dismiss();
 				if (result != "") {   
                     if (result.equalsIgnoreCase("userCreated")) {				
 						System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> result" + result);
@@ -207,15 +242,17 @@ public class RegisterActivity extends Activity {
 			}
 		});
 	}	
-	public void getCountryList(){		
-		Locale[] locales = Locale.getAvailableLocales();
-        ArrayList<String> countries = new ArrayList<String>();
-        for (Locale locale : locales) {
-            String country = locale.getDisplayCountry();
-            if (country.trim().length()>0 && !countries.contains(country)) {
-                countries.add(country);
-            }
-        }
+	
+	public void getCountryList(){
+		ArrayList<String> countries = new ArrayList<String>();
+		String[] isoCountries = Locale.getISOCountries();
+		 for (String country : isoCountries) {
+	            Locale locale = new Locale("en", country);
+	            String name = locale.getDisplayCountry();
+	            if (!"".equals(name)) {
+	            	countries.add(name);
+	            }
+	        }
         Collections.sort(countries);
         ArrayList<String> countriesSorted = new ArrayList<String>();
         countriesSorted.add("Country");
@@ -233,7 +270,7 @@ public class RegisterActivity extends Activity {
         listFavTeam = teamService.getTeamName(getApplicationContext());        
         ArrayList<TeamDTO> teamList = new ArrayList<TeamDTO>();
         TeamDTO defaultTeam = new TeamDTO();
-        defaultTeam.setTeamName("Team");
+        defaultTeam.setName("Team");
         teamList.add(defaultTeam);
         teamList.addAll(listFavTeam);
         
@@ -241,9 +278,27 @@ public class RegisterActivity extends Activity {
         spinnerArrayAdapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );       
         favTeamList = (Spinner) findViewById( R.id.spinnerTeam);
         favTeamList.setAdapter(spinnerArrayAdapter);
-	}	
-	public void insertTeamList(){
-        TeamService teamService = new TeamService();
-        teamService.insertTeamsData(RegisterActivity.this);
 	}
+    public final Pattern EMAIL_ADDRESS_PATTERN = Pattern.compile(
+            "[a-zA-Z0-9+._%-+]{1,256}" +
+            "@" +
+            "[a-zA-Z0-9][a-zA-Z0-9-]{0,64}" +
+            "(" +
+            "." +
+            "[a-zA-Z0-9][a-zA-Z0-9-]{0,25}" +
+            ")+"
+        );
+    private boolean checkEmail(String email) {
+       return EMAIL_ADDRESS_PATTERN.matcher(email).matches();
+    }
+    boolean checkEmailCorrect(String Email) {
+        String pttn = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+        Pattern p = Pattern.compile(pttn);
+        Matcher m = p.matcher(Email);
+
+        if (m.matches()) {
+               return true;
+        }
+        return false;
+ }
 }

@@ -11,11 +11,14 @@ public class UserDTO implements Serializable{
 	private String nickName;
 	private String password;
 	private long favTeam;
+	private String regId;
 		
 	public UserDTO(){}
 
+
+
 	public UserDTO(String userName, String uid, String country,
-			String nickName, String password, long favTeam) {
+			String nickName, String password, long favTeam, String regId) {
 		super();
 		this.userName = userName;
 		this.uid = uid;
@@ -23,7 +26,10 @@ public class UserDTO implements Serializable{
 		this.nickName = nickName;
 		this.password = password;
 		this.favTeam = favTeam;
+		this.regId = regId;
 	}
+
+
 
 	public String getUserName() {
 		return userName;
@@ -71,6 +77,14 @@ public class UserDTO implements Serializable{
 
 	public void setCountry(String country) {
 		this.country = country;
+	}
+
+	public String getRegId() {
+		return regId;
+	}
+
+	public void setRegId(String regId) {
+		this.regId = regId;
 	}
 		
 }

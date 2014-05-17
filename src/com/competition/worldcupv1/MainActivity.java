@@ -3,7 +3,7 @@ package com.competition.worldcupv1;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,7 +18,9 @@ import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -26,9 +28,12 @@ import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.Settings.Secure;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -36,9 +41,15 @@ import android.widget.Toast;
 
 import com.competition.worldcupv1.asynctasks.CheckUserNameTask;
 import com.competition.worldcupv1.asynctasks.CheckUserNameTask.CheckUserNameTaskListener;
+import com.competition.worldcupv1.asynctasks.CreateTeamListTask;
+import com.competition.worldcupv1.asynctasks.CreateTeamListTask.CreateTeamListTaskListener;
 import com.competition.worldcupv1.asynctasks.LoginTask;
 import com.competition.worldcupv1.asynctasks.LoginTask.LoginTaskListener;
+import com.competition.worldcupv1.asynctasks.LostPwdTask;
+import com.competition.worldcupv1.asynctasks.LostPwdTask.CreateLostPwdTaskListener;
+import com.competition.worldcupv1.dto.TeamDTO;
 import com.competition.worldcupv1.dto.UserDTO;
+import com.competition.worldcupv1.service.TeamService;
 import com.competition.worldcupv1.utils.AlertDialogManager;
 import com.competition.worldcupv1.utils.ConnectionDetector;
 import com.competition.worldcupv1.utils.ConnectionUtility;
@@ -83,27 +94,58 @@ public class MainActivity extends Activity {
 
     Button btnLoginTwitter;
     Button btnLoginFbk;
-    ProgressDialog pDialog;
     private Button btnLogin;
 	private Button btnLinkToRegister;
 	private EditText txtUserName;
 	private EditText txtPassword;
 	UserDTO userDto = null;
 	private CheckBox rememberMe;
+	private Thread thread;
+	private Button btnLostPwd;
      
     // Shared Preferences
     private static SharedPreferences mSharedPreferences;
-     
+    
+    // Shared Preferences
+    private static SharedPreferences applFirstRunPref;
+    
     // Internet Connection detector
     private ConnectionDetector cd;
      
     // Alert Dialog Manager
     AlertDialogManager alert = new AlertDialogManager();
+    TeamService teamService = new TeamService();
+    Dialog dialog;
+	final ConnectionUtility connectionUtility = new ConnectionUtility();
+	private ProgressDialog progressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.login);		   
+		setContentView(R.layout.login);
+		
+		cd = new ConnectionDetector(getApplicationContext());	
+		 if (!cd.isConnectingToInternet()) {
+        	 // Internet Connection is not present
+            alert.showAlertDialog(MainActivity.this, "Internet Connection Error","Please connect to working Internet connection and re launch application", false);
+            // stop executing code by return
+         // finish();
+         }
+		 
+		else{
+			
+		
+		//setContentView(R.layout.login);
+		applFirstRunPref = getApplicationContext().getSharedPreferences("applFirstRunPref", 0);
+		boolean firstTime = applFirstRunPref.getBoolean("firstTime", true);
+		if (firstTime) { 
+		    SharedPreferences.Editor editor = applFirstRunPref.edit();
+		    editor.putBoolean("firstTime", false);
+		    editor.commit();
+		    populateTableTeam();	    
+		    System.out.println("================================ first time load appl");	    
+		}
+				
         mPrefs = getPreferences(MODE_PRIVATE);
 		// Session class instance
         session = new SessionManager(getApplicationContext());	
@@ -135,8 +177,29 @@ public class MainActivity extends Activity {
 			btnLoginFbk = (Button) findViewById(R.id.btnFbk);   
 			btnLoginFbk.setOnClickListener(new View.OnClickListener() {
 			    @Override
-			    public void onClick(View v) {
-			       loginToFacebook();
+			    public void onClick(View v) {			    	
+			    	try {
+    					if(connectionUtility.hasWifi(getBaseContext())){
+    						loginToFacebook();
+    					}
+    					else{
+    						connectionUtility.showToast(MainActivity.this);
+    						connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
+    							@Override
+    							public void onInternetEnabled(boolean result) {
+    								loginToFacebook();
+    							}
+    							@Override
+    							public void exitApplication(boolean result) {
+    								onDestroy();
+    								finish();				
+    							}
+    						});	
+    					}
+    		    	}
+					finally{
+						
+					} 
 			     }
 			});	        		
 			
@@ -167,8 +230,30 @@ public class MainActivity extends Activity {
 	         btnLoginTwitter.setOnClickListener(new View.OnClickListener() {	 
 	            @Override
 	            public void onClick(View arg0) {
-	            	// Call login twitter function
-	                loginToTwitter();
+	            	try {
+    					if(connectionUtility.hasWifi(getBaseContext())){
+    		            	// Call login twitter function
+    		                loginToTwitter();
+    					}
+    					else{
+    						connectionUtility.showToast(MainActivity.this);
+    						connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
+    							@Override
+    							public void onInternetEnabled(boolean result) {
+    				            	// Call login twitter function
+    				                loginToTwitter();
+    							}
+    							@Override
+    							public void exitApplication(boolean result) {
+    								onDestroy();
+    								finish();				
+    							}
+    						});	
+    					}
+    		    	}
+					finally{
+						
+					} 
 	            }
 	         }); 
 		     if (!isTwitterLoggedInAlready()) {
@@ -181,7 +266,7 @@ public class MainActivity extends Activity {
 	                    AccessToken accessToken = twitter.getOAuthAccessToken(requestToken, verifier);
 	                    // Getting user details from twitter
 	                    long userID = accessToken.getUserId();
-	                    userDto = new UserDTO(String.valueOf(userID), "", "", "", "", 0);
+	                    userDto = new UserDTO(String.valueOf(userID), "", "", "", "", 0,"");
 	                    completeRegistration(userDto, accessToken);
 	                } catch (Exception e) {
 	                    // Check log for login errors
@@ -201,11 +286,12 @@ public class MainActivity extends Activity {
 			    btnLogin = (Button) findViewById(R.id.btnLogin);
 			    btnLinkToRegister = (Button) findViewById(R.id.btnRegister);
 			    rememberMe = (CheckBox) findViewById(R.id.chkRemeber);
+			    btnLostPwd = (Button) findViewById(R.id.btnLostPwd);
 			        
 		        // Login button Click Event (normal)
 		        btnLogin.setOnClickListener(new View.OnClickListener() {		 
 		            public void onClick(View view) {
-		            	final ConnectionUtility connectionUtility = new ConnectionUtility();
+
 		            	if(( txtUserName.length() == 0 || txtUserName.equals("") || txtUserName == null) || (txtPassword.length() == 0 || txtPassword.equals("") || txtPassword == null))
 		                {    	
 		            		Toast toast = Toast.makeText(MainActivity.this,"Please fill in all the fields", Toast.LENGTH_LONG);
@@ -215,29 +301,35 @@ public class MainActivity extends Activity {
 		            	else{
 		            		final String userName = txtUserName.getText().toString();
 		                	final String password = txtPassword.getText().toString();
-		            		final UserDTO user = new UserDTO(userName,"","","",password,0);
-		            		try {
-		    					if(connectionUtility.hasWifi(getBaseContext())){
-		    						login(user);
-		    					}
-		    					else{
-		    						connectionUtility.showToast(MainActivity.this);
-		    						connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
-		    							@Override
-		    							public void onInternetEnabled(boolean result) {
-		    								login(user);  
-		    							}
-		    							@Override
-		    							public void exitApplication(boolean result) {
-		    								onDestroy();
-		    								finish();				
-		    							}
-		    						});	
-		    					}
-		    		    	}
-							finally{
-								
-							} 
+		            		final UserDTO user = new UserDTO(userName,"","","",password,0,"");
+		            		
+		            		login(user);
+//		            		try {
+//		    					if(connectionUtility.hasWifi(getBaseContext())){		    						
+//		    						progressDialog = new ProgressDialog(MainActivity.this);
+//		    						progressDialog.setMessage("Loading ...");
+//		    						login(user);
+//		    					}
+//		    					else{
+//		    						connectionUtility.showToast(MainActivity.this);
+//		    						connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
+//		    							@Override
+//		    							public void onInternetEnabled(boolean result) {
+//		    								progressDialog = new ProgressDialog(MainActivity.this);
+//				    						progressDialog.setMessage("Loading ...");
+//		    								login(user);  
+//		    							}
+//		    							@Override
+//		    							public void exitApplication(boolean result) {
+//		    								onDestroy();
+//		    								finish();				
+//		    							}
+//		    						});	
+//		    					}
+//		    		    	}
+//							finally{
+//								
+//							} 
 		            	}
 		            }
 		        });			        
@@ -249,7 +341,53 @@ public class MainActivity extends Activity {
 			            finish();
 			            }
 			    });
+			    
+			    // Link to Register Screen
+			    btnLostPwd.setOnClickListener(new View.OnClickListener() {			 
+			    	public void onClick(View view) {
+			    		// Create custom dialog object
+		                dialog = new Dialog(MainActivity.this);
+		                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		                dialog.setCanceledOnTouchOutside(false);
+		                // Include dialog.xml file
+		                dialog.setContentView(R.layout.lost_password);	
+		                
+		                Button cancle_btn = (Button) dialog.findViewById(R.id.btbPwdCancel);
+		                cancle_btn.setOnClickListener(new View.OnClickListener() 
+		                {
+
+							@Override
+							public void onClick(View v) {
+								 // Perform button logic
+			                    dialog.dismiss();								
+							}
+		                   
+		                });
+		                
+		                Button send_pwd_btn = (Button) dialog.findViewById(R.id.btnPwdSave);
+		                final EditText editTextLostPwd = (EditText) dialog.findViewById(R.id.editTextLostPwd);		                
+		                send_pwd_btn.setOnClickListener(new View.OnClickListener() 
+		                {
+							@Override
+							public void onClick(View v) {
+								String email = editTextLostPwd.getText().toString();
+					                
+								if(( email.length() == 0 || email.equals("") || email == null)){
+									Toast toast = Toast.makeText(MainActivity.this,"Enter your email address", Toast.LENGTH_LONG);
+			    	            	toast.setGravity(Gravity.CENTER, 0, 0);
+			    	            	toast.show();	
+								}
+								else{
+									sendEmailLostPwd(email);
+								}
+							}
+		                   
+		                });
+		                dialog.show();
+			            }
+			    });
 			}	 
+	}
 		}	 
 	    /**
 	     * Function to login twitter
@@ -349,7 +487,7 @@ public class MainActivity extends Activity {
 		 	            e.remove("access_expires");
 		 	            e.commit();
 		 	    		
-		 	            userDto = new UserDTO(userName, "", "", nickName, "", 0);
+		 	            userDto = new UserDTO(userName, "", "", nickName, "", 0,"");
 		 	            completeRegistrationFacebook(userDto);
 		 	    	}
 		 	    });		 	     
@@ -375,6 +513,17 @@ public class MainActivity extends Activity {
 	}
  	 
  	public void login (final UserDTO user){
+ 		String uid="";
+ 		
+ 		final TelephonyManager mTelephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+    	//get deviceID
+        if (mTelephony.getDeviceId() != null){
+        	uid = mTelephony.getDeviceId(); //use for mobiles
+         }
+        else{
+        	uid = Secure.getString(getApplicationContext().getContentResolver(), Secure.ANDROID_ID); //use for tablets
+         }  
+        user.setUid(uid);
 		LoginTask loginTask = new LoginTask();
 		loginTask.setUser(user);
 		loginTask.setContext(getApplicationContext());
@@ -389,7 +538,8 @@ public class MainActivity extends Activity {
 							session.createLoginSession(user.getUserName(),"","",0,"");
 						}else{
 							session.createTempSession(user.getUserName(),"","",0,"");
-						}						
+						}	
+						//progressDialog.dismiss();
 						Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
 		                // Close all views before launching matchList
 		                matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -397,12 +547,18 @@ public class MainActivity extends Activity {
 		                // Close match list View
 		                finish();
 		             }else{
-		            	 Toast.makeText(getApplicationContext(), "Credentials not ok", Toast.LENGTH_LONG).show(); 
+		            		//progressDialog.dismiss();
+		            	Toast toast = Toast.makeText(MainActivity.this,"Credentials not ok", Toast.LENGTH_LONG);
+		            	toast.setGravity(Gravity.CENTER, 0, 0);
+		            	toast.show();		            	
 		             }
 				}
 				else{
+					//progressDialog.dismiss();
                     // Error in registration
-					Toast.makeText(getApplicationContext(), "Error occured in login", Toast.LENGTH_LONG).show(); 
+					Toast toast = Toast.makeText(MainActivity.this,"Error occured in login", Toast.LENGTH_LONG);
+	            	toast.setGravity(Gravity.CENTER, 0, 0);
+	            	toast.show();					 
                }				
 			}
 		});
@@ -436,7 +592,7 @@ public class MainActivity extends Activity {
 								e1.printStackTrace();
 							}
 		                    String nickname = user.getName();
-		                    userDto = new UserDTO(String.valueOf(userID), "", "", nickname, "", 0);
+		                    userDto = new UserDTO(String.valueOf(userID), "", "", nickname, "", 0,"");
 		                    session.createLoginSession(String.valueOf(userID), "", nickname, 0, "");		
 							Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
 			                // Close all views before launching matchList
@@ -467,7 +623,9 @@ public class MainActivity extends Activity {
 					}
 				else{
                     // Error in registration
-					Toast.makeText(getApplicationContext(), "Error occured in registration", Toast.LENGTH_LONG).show(); 
+					Toast toast = Toast.makeText(MainActivity.this,"Error occured in registration", Toast.LENGTH_LONG);
+	            	toast.setGravity(Gravity.CENTER, 0, 0);
+	            	toast.show();					
                }				
 			}
 		});
@@ -484,7 +642,7 @@ public class MainActivity extends Activity {
 				if (result != "") {   
                     if (result.equalsIgnoreCase("userNameExist")) {				
 						System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> result" + result);		                    
-	                    userDto = new UserDTO(user.getUserName(), "", "", user.getNickName(), "", 0);		                    
+	                    userDto = new UserDTO(user.getUserName(), "", "", user.getNickName(), "", 0,"");		                    
 	                    session.createLoginSession(user.getUserName(), "", user.getNickName(), 0, "");		                    
 						Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
 		                // Close all views before launching matchList
@@ -506,9 +664,51 @@ public class MainActivity extends Activity {
 				}
 				else{
                     // Error in registration
-					Toast.makeText(getApplicationContext(), "Error occured in registration", Toast.LENGTH_LONG).show(); 
+					Toast toast = Toast.makeText(MainActivity.this,"Error occured in registration", Toast.LENGTH_LONG);
+	            	toast.setGravity(Gravity.CENTER, 0, 0);
+	            	toast.show();	
+					
                }				
 			}
 		});
 	}
+	
+	public void  populateTableTeam (){
+		CreateTeamListTask populateTeamTask = new CreateTeamListTask();
+		populateTeamTask.setContext(getApplicationContext());
+		populateTeamTask.execute();        
+		populateTeamTask.setCreateTeamListTaskListener(new CreateTeamListTaskListener() {			
+			@Override
+			public void onComplete(List<TeamDTO> result) {
+				teamService.insertTeamsData(getApplicationContext(), result);				
+			}});	
+		}
+	
+	public void sendEmailLostPwd (final String email){
+		LostPwdTask lossPwdTask = new LostPwdTask();
+        lossPwdTask.setEmail(email);
+        lossPwdTask.setContext(getApplicationContext());
+        lossPwdTask.execute();        
+        lossPwdTask.setCreateLostPwdTaskListener(new CreateLostPwdTaskListener() {
+
+			@Override
+			public void onComplete(String result) {
+				if (result != "") {   
+                    if (result.equalsIgnoreCase("emailSend")) {	
+                    	Toast toast = Toast.makeText(MainActivity.this,"Email send", Toast.LENGTH_LONG);
+    	            	toast.setGravity(Gravity.CENTER, 0, 0);
+    	            	toast.show();	    	            	
+    	            	dialog.dismiss();	
+                    }
+                    else{
+                    	Toast toast = Toast.makeText(MainActivity.this,"There has been a problem. Please Try later", Toast.LENGTH_LONG);
+    	            	toast.setGravity(Gravity.CENTER, 0, 0);
+    	            	toast.show();	 
+                    }
+				}
+			}	
+        });
+	}
+	
+	
 }

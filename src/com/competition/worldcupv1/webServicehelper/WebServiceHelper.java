@@ -64,9 +64,10 @@ public class WebServiceHelper {
 		String result="";
       
     	// Add data
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
         nameValuePairs.add(new BasicNameValuePair("username", user.getUserName()));
         nameValuePairs.add(new BasicNameValuePair("password", user.getPassword()));
+        nameValuePairs.add(new BasicNameValuePair("uid", user.getUid()));
         
         //use the generic list fn to post JSON obj
 		WebServiceUtility webServiceUtility = new WebServiceUtility();

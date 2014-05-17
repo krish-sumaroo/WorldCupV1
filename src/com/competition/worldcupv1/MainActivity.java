@@ -20,6 +20,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -27,6 +28,8 @@ import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.Settings.Secure;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -510,6 +513,17 @@ public class MainActivity extends Activity {
 	}
  	 
  	public void login (final UserDTO user){
+ 		String uid="";
+ 		
+ 		final TelephonyManager mTelephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+    	//get deviceID
+        if (mTelephony.getDeviceId() != null){
+        	uid = mTelephony.getDeviceId(); //use for mobiles
+         }
+        else{
+        	uid = Secure.getString(getApplicationContext().getContentResolver(), Secure.ANDROID_ID); //use for tablets
+         }  
+        user.setUid(uid);
 		LoginTask loginTask = new LoginTask();
 		loginTask.setUser(user);
 		loginTask.setContext(getApplicationContext());

@@ -12,6 +12,11 @@ import com.google.android.gcm.GCMBaseIntentService;
 
 public class GCMIntentService extends GCMBaseIntentService {
 	
+	private static String PLAYER_FINAL_LIST = "PLAYER FINAL LIST";
+	private static String GAME_OVER = "GAME OVER";
+	private static String MESSAGE = "MESSAGE";
+	Controller controller = (Controller) getApplicationContext();   
+	
 	 public GCMIntentService() {
 		 // Call extended class Constructor GCMBaseIntentService
 		 super(Config.GOOGLE_SENDER_ID);
@@ -30,6 +35,21 @@ public class GCMIntentService extends GCMBaseIntentService {
 	        
 		Intent intent = new Intent(Config.DISPLAY_MESSAGE_ACTION);
 		intent.putExtra(Config.EXTRA_MESSAGE, arg1);
+		
+		/*
+		// get push action
+		String actionVal = msgJson.getString("action");
+		if(actionVal.equalsIgnoreCase(PLAYER_FINAL_LIST)){
+			controller.pushActionFinalPlayerList();
+		}
+		if(actionVal.equalsIgnoreCase(GAME_OVER)){
+			controller.pushActionGameOver();
+		}
+		if(actionVal.equalsIgnoreCase(MESSAGE)){
+			controller.pushActionMessage();
+		}
+		*/
+		
 		// Send Broadcast to Broadcast receiver with message
 		arg0.sendBroadcast(intent);
 		generateNotification(arg0, message);
@@ -39,8 +59,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 	protected void onRegistered(Context context, String registrationId) {
 		//Get Global Controller Class object (see application tag in AndroidManifest.xml)
         Log.i(TAG, "Device registered: regId = " + registrationId);
-        System.out.println(">>>>>>>>>>>>>>>>>> registrationId = " + registrationId);
-        Controller  controller = (Controller) getApplicationContext();        
+        System.out.println(">>>>>>>>>>>>>>>>>> registrationId = " + registrationId);            
         String uid = controller.getUID();
         controller.registerGCM(uid, registrationId, context);
 	}

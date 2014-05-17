@@ -3,13 +3,6 @@ package com.competition.worldcupv1.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.competition.worldcupv1.R;
-import com.competition.worldcupv1.dto.GameInfoDTO;
-import com.competition.worldcupv1.dto.PlayerDTO;
-import com.competition.worldcupv1.dto.Player;
-import com.competition.worldcupv1.service.GameService;
-
-
 import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,14 +12,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ImageView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
+
+import com.competition.worldcupv1.R;
+import com.competition.worldcupv1.dto.GameInfoDTO;
+import com.competition.worldcupv1.dto.Player;
+import com.competition.worldcupv1.dto.PlayerDTO;
+import com.competition.worldcupv1.service.GameService;
+import com.competition.worldcupv1.service.PlayerService;
 
 public class TeamPlayersOneFrag extends Fragment {
 	
 	GameService gameService = new GameService();
+	PlayerService playerService = new PlayerService();
 	 View v ;
 	
 	 @Override
@@ -50,7 +50,7 @@ public class TeamPlayersOneFrag extends Fragment {
 		        TextView tv = (TextView)v.findViewById(R.id.txtTeamName1);
 		   	 	tv.setText(currentGame.getTeam1Name());	
 		   	 
-		        List<PlayerDTO> listPlayers = gameService.getPlayers(getActivity(), currentGame.getTeam1Id());
+		        List<PlayerDTO> listPlayers = playerService.getPlayers(getActivity(), currentGame.getTeam1Id());
 		        
 		        ArrayList<Player> playersList = new ArrayList<Player>();
 		        for ( PlayerDTO player: listPlayers) {

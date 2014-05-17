@@ -40,6 +40,7 @@ import com.competition.worldcupv1.dto.GameDTO;
 import com.competition.worldcupv1.dto.TeamDTO;
 import com.competition.worldcupv1.dto.UserDTO;
 import com.competition.worldcupv1.service.TeamService;
+import com.competition.worldcupv1.service.UserService;
 import com.competition.worldcupv1.utils.ConnectionUtility;
 import com.competition.worldcupv1.utils.ConnectionUtility.ConnectionUtilityListener;
 import com.competition.worldcupv1.utils.SessionManager;
@@ -218,7 +219,12 @@ public class RegisterActivity extends Activity {
 				if (result != "") {   
                     if (result.equalsIgnoreCase("userCreated")) {				
 						System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> result" + result);
-						session.createLoginSession(user.getUserName(),user.getUid(),user.getNickName(),user.getFavTeam(),user.getCountry());	                       
+						session.createLoginSession(user.getUserName(),user.getUid(),user.getNickName(),user.getFavTeam(),user.getCountry());	
+						
+						//register GCM
+						UserService userService = new UserService();
+						userService.registerGCM(RegisterActivity.this);
+						
 						Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
 		                // Close all views before launching matchList
 		                matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -279,18 +285,7 @@ public class RegisterActivity extends Activity {
         favTeamList = (Spinner) findViewById( R.id.spinnerTeam);
         favTeamList.setAdapter(spinnerArrayAdapter);
 	}
-    public final Pattern EMAIL_ADDRESS_PATTERN = Pattern.compile(
-            "[a-zA-Z0-9+._%-+]{1,256}" +
-            "@" +
-            "[a-zA-Z0-9][a-zA-Z0-9-]{0,64}" +
-            "(" +
-            "." +
-            "[a-zA-Z0-9][a-zA-Z0-9-]{0,25}" +
-            ")+"
-        );
-    private boolean checkEmail(String email) {
-       return EMAIL_ADDRESS_PATTERN.matcher(email).matches();
-    }
+
     boolean checkEmailCorrect(String Email) {
         String pttn = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
         Pattern p = Pattern.compile(pttn);
@@ -300,5 +295,5 @@ public class RegisterActivity extends Activity {
                return true;
         }
         return false;
- }
+    }
 }

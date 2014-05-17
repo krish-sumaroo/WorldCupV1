@@ -149,16 +149,4 @@ public class GameService {
 	    dbHelper.deleteTablePlayers();
 	    dbHelper.close();	
 	}
-	
-	public void registerId(Context context){  
-		// GCM
-        // Make sure the device has the proper dependencies.
-        GCMRegistrar.checkDevice(context);
- 
-        // Make sure the manifest permissions was properly set
-        GCMRegistrar.checkManifest(context);
-        
-     // Register with GCM           
-        GCMRegistrar.register(context, Config.GOOGLE_SENDER_ID);        
-	}
 }

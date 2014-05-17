@@ -36,12 +36,13 @@ public class GCMIntentService extends GCMBaseIntentService {
 	}
 
 	@Override
-	protected void onRegistered(Context arg0, String registrationId) {
+	protected void onRegistered(Context context, String registrationId) {
 		//Get Global Controller Class object (see application tag in AndroidManifest.xml)
         Log.i(TAG, "Device registered: regId = " + registrationId);
         System.out.println(">>>>>>>>>>>>>>>>>> registrationId = " + registrationId);
-        Controller  aController = (Controller) getApplicationContext();        
-        //aController.regId(arg0);
+        Controller  controller = (Controller) getApplicationContext();        
+        String uid = controller.getUID();
+        controller.registerGCM(uid, registrationId, context);
 	}
 
 	@Override

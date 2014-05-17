@@ -45,7 +45,7 @@ public class LoginTask extends AsyncTask<Void, Void, String>{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "failure";
+		return "done";
 	}
 	@Override
 	protected void onPostExecute(String result) {

@@ -32,7 +32,7 @@ public class CreateUserTask extends AsyncTask<Void, Void, String>{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "failure";
+		return "done";
 	}
 	
 	public UserDTO getUser() {

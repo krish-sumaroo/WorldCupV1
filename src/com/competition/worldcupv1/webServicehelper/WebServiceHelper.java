@@ -14,7 +14,6 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.util.Log;
 
-import com.competition.worldcupv1.databasehelper.DatabaseHelper;
 import com.competition.worldcupv1.dto.GameDTO;
 import com.competition.worldcupv1.dto.PlayerDTO;
 import com.competition.worldcupv1.dto.TeamDTO;
@@ -22,7 +21,6 @@ import com.competition.worldcupv1.dto.UserDTO;
 import com.competition.worldcupv1.utils.WebServiceUtility;
 
 public class WebServiceHelper {	
-	private DatabaseHelper dbHelper;  
 	
 	public WebServiceHelper() {
 		// TODO Auto-generated constructor stub
@@ -205,9 +203,9 @@ public class WebServiceHelper {
     }
     
 	
-	// LostPassword
+	// LostPassword - send email
 	public String lostPassword(String email, Context context) throws ClientProtocolException, IOException, JSONException{
-		String url = "user/lossPwd/"; 
+		String url = "users/lossPwd/"; 
 		String result="";
        	
     	// Add data
@@ -226,5 +224,19 @@ public class WebServiceHelper {
         }
 		return result;
               
+	}
+	
+	// Send regisId for the device when login or register
+	public void regisisterGCM(String uid, String regId, Context context) throws ClientProtocolException, IOException, JSONException{
+		String url = "users/regisGCM"; 
+       	
+    	// Add data
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+        nameValuePairs.add(new BasicNameValuePair("uid", uid));
+        nameValuePairs.add(new BasicNameValuePair("regId", regId));
+        //use the generic list fn to post JSON obj
+		WebServiceUtility webServiceUtility = new WebServiceUtility();
+		webServiceUtility.postData(nameValuePairs, url);			
+            
 	}
 }

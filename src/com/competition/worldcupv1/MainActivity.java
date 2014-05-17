@@ -50,6 +50,7 @@ import com.competition.worldcupv1.asynctasks.LostPwdTask.CreateLostPwdTaskListen
 import com.competition.worldcupv1.dto.TeamDTO;
 import com.competition.worldcupv1.dto.UserDTO;
 import com.competition.worldcupv1.service.TeamService;
+import com.competition.worldcupv1.service.UserService;
 import com.competition.worldcupv1.utils.AlertDialogManager;
 import com.competition.worldcupv1.utils.ConnectionDetector;
 import com.competition.worldcupv1.utils.ConnectionUtility;
@@ -303,33 +304,32 @@ public class MainActivity extends Activity {
 		                	final String password = txtPassword.getText().toString();
 		            		final UserDTO user = new UserDTO(userName,"","","",password,0,"");
 		            		
-		            		login(user);
-//		            		try {
-//		    					if(connectionUtility.hasWifi(getBaseContext())){		    						
-//		    						progressDialog = new ProgressDialog(MainActivity.this);
-//		    						progressDialog.setMessage("Loading ...");
-//		    						login(user);
-//		    					}
-//		    					else{
-//		    						connectionUtility.showToast(MainActivity.this);
-//		    						connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
-//		    							@Override
-//		    							public void onInternetEnabled(boolean result) {
-//		    								progressDialog = new ProgressDialog(MainActivity.this);
-//				    						progressDialog.setMessage("Loading ...");
-//		    								login(user);  
-//		    							}
-//		    							@Override
-//		    							public void exitApplication(boolean result) {
-//		    								onDestroy();
-//		    								finish();				
-//		    							}
-//		    						});	
-//		    					}
-//		    		    	}
-//							finally{
-//								
-//							} 
+		            		try {
+		    					if(connectionUtility.hasWifi(getBaseContext())){		    						
+		    						progressDialog = new ProgressDialog(MainActivity.this);
+		    						progressDialog.setMessage("Loading ...");
+		    						login(user);
+		    					}
+		    					else{
+		    						connectionUtility.showToast(MainActivity.this);
+		    						connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
+		    							@Override
+		    							public void onInternetEnabled(boolean result) {
+		    								progressDialog = new ProgressDialog(MainActivity.this);
+				    						progressDialog.setMessage("Loading ...");
+		    								login(user);  
+		    							}
+		    							@Override
+		    							public void exitApplication(boolean result) {
+		    								onDestroy();
+		    								finish();				
+		    							}
+		    						});	
+		    					}
+		    		    	}
+							finally{
+								
+							} 
 		            	}
 		            }
 		        });			        
@@ -539,6 +539,11 @@ public class MainActivity extends Activity {
 						}else{
 							session.createTempSession(user.getUserName(),"","",0,"");
 						}	
+						
+						//register GCM
+						UserService userService = new UserService();
+						userService.registerGCM(MainActivity.this);
+						
 						//progressDialog.dismiss();
 						Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
 		                // Close all views before launching matchList
@@ -564,6 +569,7 @@ public class MainActivity extends Activity {
 		});
 	}
  	
+ 	//complete registration twitter
 	public void completeRegistration (final UserDTO user, final AccessToken accessToken){
 		CheckUserNameTask checkUserNameTask = new CheckUserNameTask();
         checkUserNameTask.setUser(user);
@@ -593,7 +599,12 @@ public class MainActivity extends Activity {
 							}
 		                    String nickname = user.getName();
 		                    userDto = new UserDTO(String.valueOf(userID), "", "", nickname, "", 0,"");
-		                    session.createLoginSession(String.valueOf(userID), "", nickname, 0, "");		
+		                    session.createLoginSession(String.valueOf(userID), "", nickname, 0, "");	
+		                    
+		                    //register GCM
+							UserService userService = new UserService();
+							userService.registerGCM(MainActivity.this);
+							
 							Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
 			                // Close all views before launching matchList
 			                matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -643,7 +654,12 @@ public class MainActivity extends Activity {
                     if (result.equalsIgnoreCase("userNameExist")) {				
 						System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> result" + result);		                    
 	                    userDto = new UserDTO(user.getUserName(), "", "", user.getNickName(), "", 0,"");		                    
-	                    session.createLoginSession(user.getUserName(), "", user.getNickName(), 0, "");		                    
+	                    session.createLoginSession(user.getUserName(), "", user.getNickName(), 0, "");	
+	                    
+	                    //register GCM
+						UserService userService = new UserService();
+						userService.registerGCM(MainActivity.this);
+						
 						Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
 		                // Close all views before launching matchList
 		                matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

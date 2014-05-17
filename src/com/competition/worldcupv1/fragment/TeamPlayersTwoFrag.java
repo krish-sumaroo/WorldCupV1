@@ -6,9 +6,7 @@ import java.util.List;
 import com.competition.worldcupv1.R;
 import com.competition.worldcupv1.dto.GameInfoDTO;
 import com.competition.worldcupv1.dto.PlayerDTO;
-import com.competition.worldcupv1.fragment.trial.Player;
-import com.competition.worldcupv1.fragment.trial.Weather;
-import com.competition.worldcupv1.fragment.trial.WeatherAdapter;
+import com.competition.worldcupv1.dto.Player;
 import com.competition.worldcupv1.service.GameService;
 
 import android.graphics.Color;

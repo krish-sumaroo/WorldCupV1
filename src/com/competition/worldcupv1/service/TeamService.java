@@ -11,25 +11,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 public class TeamService {	
-	public void insertTeamsData(Context context){
-	    DatabaseHelper db = new DatabaseHelper(context);
-	    Boolean isTableFill = db.isTableTeamFill();	    
-	    if(!isTableFill){
-		    //createTeam(long _id, String team_name, String country_code, String coach)
-		    TeamDTO team1 = new TeamDTO(1, "Brazil", "bra","A");
-		    TeamDTO team2 = new TeamDTO(5,"Spain", "spa", "B");
-		    TeamDTO team3 = new TeamDTO(2, "Croatia", "cro", "A");
-		    TeamDTO team4 = new TeamDTO(10, "Greece", "gre", "C");
-		    
-		    //public TeamDTO(Integer teamId, String name, String flag, String group) 
-		    
-		    db.addTeam(team1);
-		    db.addTeam(team2);
-		    db.addTeam(team3);
-		    db.addTeam(team4);
-	    }	   
-	}
-	
+
 	public ArrayList<TeamDTO> getTeamName(Context context){	
 		ArrayList<TeamDTO> teamList = new ArrayList<TeamDTO>();		
 		DatabaseHelper dbHelper =  new DatabaseHelper(context);

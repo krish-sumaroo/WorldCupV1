@@ -32,7 +32,9 @@ import com.competition.worldcupv1.dto.PlayerDTO;
 import com.competition.worldcupv1.fragment.TeamPlayersOneFrag;
 import com.competition.worldcupv1.fragment.TeamPlayersTwoFrag;
 import com.competition.worldcupv1.service.GameService;
+import com.competition.worldcupv1.utils.ConnectionUtility;
 import com.competition.worldcupv1.utils.SessionManager;
+import com.competition.worldcupv1.utils.ConnectionUtility.ConnectionUtilityListener;
 import com.facebook.Session;
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.Facebook;
@@ -75,6 +77,7 @@ public class GameListActivity extends FragmentActivity   {
    	ProgressDialog pDialog;
    	private static SharedPreferences mSharedPreferences;
    	SessionManager session;
+	final ConnectionUtility connectionUtility = new ConnectionUtility();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -98,9 +101,32 @@ public class GameListActivity extends FragmentActivity   {
 		boolean isTableGameFill = gameService.isTableGameFill(getApplicationContext());
 		if(isTableGameFill){
 			uponStatusDisplayPage2();
-		}else{
-			//if empty we populate the table
-			populateTableGameInfo();
+		}else{		
+			
+			try {
+				if(connectionUtility.hasWifi(getBaseContext())){
+					//if empty we populate the table
+					populateTableGameInfo();
+				}
+				else{
+					connectionUtility.showToast(GameListActivity.this);
+					connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
+						@Override
+						public void onInternetEnabled(boolean result) {
+							//if empty we populate the table
+							populateTableGameInfo();
+						}
+						@Override
+						public void exitApplication(boolean result) {
+							onDestroy();
+							finish();				
+						}
+					});	
+				}
+	    	}
+			finally{
+				
+			}			
 		}		 
 	}
 
@@ -181,11 +207,34 @@ public class GameListActivity extends FragmentActivity   {
 			txtTime.setText(gameInfo.getTime());
 		}
 		else if (checkPlayerInfoStatus == PLAYER_STATUS_INFO_FINAL){			
-			GameDTO currentGame = gameService.getGame(getApplicationContext());			
+			final GameDTO currentGame = gameService.getGame(getApplicationContext());			
 			boolean isTablePlayerFill = gameService.isTablePlayerFill(getApplicationContext());
 			if(!isTablePlayerFill){
-				//populate table game players 
-				populateTablePlayers (currentGame.getTeam1Id(), currentGame.getTeam2Id());		
+				try {
+					if(connectionUtility.hasWifi(getBaseContext())){
+						//populate table game players 
+						populateTablePlayers (currentGame.getTeam1Id(), currentGame.getTeam2Id());	
+					}
+					else{
+						connectionUtility.showToast(GameListActivity.this);
+						connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
+							@Override
+							public void onInternetEnabled(boolean result) {
+								//populate table game players 
+								populateTablePlayers (currentGame.getTeam1Id(), currentGame.getTeam2Id());	
+							}
+							@Override
+							public void exitApplication(boolean result) {
+								onDestroy();
+								finish();				
+							}
+						});	
+					}
+		    	}
+				finally{
+					
+				}		
+						
 			}				
 
 		}
@@ -208,11 +257,33 @@ public class GameListActivity extends FragmentActivity   {
 			txtTime.setText(gameInfo.getTime());
 		}
 		else if (checkPlayerInfoStatus == PLAYER_STATUS_INFO_FINAL){			
-			GameDTO currentGame = gameService.getGame(getApplicationContext());			
+			final GameDTO currentGame = gameService.getGame(getApplicationContext());			
 			boolean isTablePlayerFill = gameService.isTablePlayerFill(getApplicationContext());
 			if(!isTablePlayerFill){
-				//populate table game players 
-				populateTablePlayers (currentGame.getTeam1Id(), currentGame.getTeam2Id());	
+				try {
+					if(connectionUtility.hasWifi(getBaseContext())){
+						//populate table game players 
+						populateTablePlayers (currentGame.getTeam1Id(), currentGame.getTeam2Id());	
+					}
+					else{
+						connectionUtility.showToast(GameListActivity.this);
+						connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
+							@Override
+							public void onInternetEnabled(boolean result) {
+								//populate table game players 
+								populateTablePlayers (currentGame.getTeam1Id(), currentGame.getTeam2Id());	
+							}
+							@Override
+							public void exitApplication(boolean result) {
+								onDestroy();
+								finish();				
+							}
+						});	
+					}
+		    	}
+				finally{
+					
+				}		
 				
 				//display page players
 				 setContentView(R.layout.main_teamplayers_fragment);

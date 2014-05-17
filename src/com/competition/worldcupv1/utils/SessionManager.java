@@ -33,6 +33,7 @@ public class SessionManager {
     public static final String KEY_FACEBOOK_USERNAME = "faceBkUsername";
     public static final String KEY_FACEBOOK_NICKNAME = "faceBkNickname";
     public static final String KEY_LOGIN_TYPE = "loginType";
+    public static final String KEY_REGISTRATION = "registrationId";
      
     // Constructor
     public SessionManager(Context context){
@@ -206,4 +207,23 @@ public class SessionManager {
     public boolean isLoggedIn(){
         return pref.getBoolean(IS_LOGIN, false);
     }
+    
+    /**
+     * Create login session
+     * */
+    public void addRegistrationId(String regId){  
+        editor.putString(KEY_REGISTRATION, regId);
+        // commit changes
+        editor.commit();
+    }     
+    
+    /**
+     * Get twitter stored session data
+     * */
+    public HashMap<String, String> getRegistrationId(){
+        HashMap<String, String> user = new HashMap<String, String>();
+        user.put(KEY_REGISTRATION, pref.getString(KEY_REGISTRATION, null)); 
+        // return user
+        return user;
+    }    
 }

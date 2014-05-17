@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.competition.worldcupv1.R;
-import com.competition.worldcupv1.fragment.trial.Player;
+import com.competition.worldcupv1.dto.Player;
 
 
 public class PlayerListAdapter extends ArrayAdapter<Player>{

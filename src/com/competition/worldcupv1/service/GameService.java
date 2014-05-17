@@ -3,14 +3,22 @@ package com.competition.worldcupv1.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
+import android.os.PowerManager;
+import android.widget.Toast;
 
+import com.competition.worldcupv1.Config;
+import com.competition.worldcupv1.RegisterActivity;
 import com.competition.worldcupv1.databasehelper.DatabaseHelper;
 import com.competition.worldcupv1.dto.GameDTO;
 import com.competition.worldcupv1.dto.GameInfoDTO;
 import com.competition.worldcupv1.dto.PlayerDTO;
 import com.competition.worldcupv1.dto.TeamDTO;
+import com.google.android.gcm.GCMRegistrar;
 
 public class GameService {
 	public boolean isTableGameFill(Context context){
@@ -140,5 +148,17 @@ public class GameService {
 	    dbHelper.open();
 	    dbHelper.deleteTablePlayers();
 	    dbHelper.close();	
+	}
+	
+	public void registerId(Context context){  
+		// GCM
+        // Make sure the device has the proper dependencies.
+        GCMRegistrar.checkDevice(context);
+ 
+        // Make sure the manifest permissions was properly set
+        GCMRegistrar.checkManifest(context);
+        
+     // Register with GCM           
+        GCMRegistrar.register(context, Config.GOOGLE_SENDER_ID);        
 	}
 }

@@ -2,9 +2,13 @@ package com.competition.worldcupv1;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -30,6 +34,8 @@ import com.competition.worldcupv1.asynctasks.CreateGameInfoTask;
 import com.competition.worldcupv1.asynctasks.CreateGameInfoTask.CreateGameInfoTaskListener;
 import com.competition.worldcupv1.asynctasks.CreateUserTask;
 import com.competition.worldcupv1.asynctasks.CreateUserTask.CreateUserTaskListener;
+import com.competition.worldcupv1.asynctasks.GetRegistrationIdTask;
+import com.competition.worldcupv1.asynctasks.GetRegistrationIdTask.GetRegistrationIdTaskListener;
 import com.competition.worldcupv1.dto.GameDTO;
 import com.competition.worldcupv1.dto.TeamDTO;
 import com.competition.worldcupv1.dto.UserDTO;
@@ -59,16 +65,12 @@ public class RegisterActivity extends Activity {
     
     // Asyntask
     AsyncTask<Void, Void, Void> mRegisterTask;
+	private ProgressDialog progressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.register);		
-		
-		
-		//test ();
-		
-		
+		setContentView(R.layout.register);	
 		//Session Manager
         session = new SessionManager(getApplicationContext());
 		thread = new Thread() {    
@@ -102,7 +104,16 @@ public class RegisterActivity extends Activity {
 					            		toast.show();
 					                }
 					            	else{
-					                	final String userName = txtUserName.getText().toString();
+					            		final String userName = txtUserName.getText().toString();
+					            		
+					                    if(!checkEmailCorrect(userName)){
+					                    	Toast toast = Toast.makeText(RegisterActivity.this,"Invalid Email Addresss", Toast.LENGTH_LONG);
+					                    	toast.setGravity(Gravity.CENTER, 0, 0);
+					                    	toast.show();
+					                    }
+					                    else
+					                    {
+					                	
 					                	final String nickName = txtNickName.getText().toString();
 					                	final String password = txtPassword.getText().toString();
 					                	final String countrySelected = countryList.getSelectedItem().toString();
@@ -117,87 +128,38 @@ public class RegisterActivity extends Activity {
 					    		        else{
 					    		        	uid = Secure.getString(getApplicationContext().getContentResolver(), Secure.ANDROID_ID); //use for tablets
 					    		         }  
-					    		        
-
-					    		        
-					    		    	final UserDTO user = new UserDTO(userName,uid,countrySelected,nickName,password,favTeamId);		
-					    		    	//************************** GCM ************************************
-					    		    	
-					    		        // GCM
-					    		        // Make sure the device has the proper dependencies.
-					    		        GCMRegistrar.checkDevice(RegisterActivity.this);
-					    		 
-					    		        // Make sure the manifest permissions was properly set
-					    		        GCMRegistrar.checkManifest(RegisterActivity.this);
-					    		        
-					    		     
-										// Register custom Broadcast receiver to show messages on activity
-					    		        registerReceiver(mHandleMessageReceiver, new IntentFilter(
-					    		                Config.DISPLAY_MESSAGE_ACTION));
-					    		        
-					    		     // Get GCM registration id
-					    		        final String regId = GCMRegistrar.getRegistrationId(RegisterActivity.this);
-					    		        String regId2="";
-					    		        
-					    		        
-					    		     // Check if regid already presents
-					    		        if (regId.equals("")) {
-					    		             
-					    		            // Register with GCM           
-					    		            GCMRegistrar.register(RegisterActivity.this, Config.GOOGLE_SENDER_ID);
-					    		            
-					    		            regId2 = GCMRegistrar.getRegistrationId(RegisterActivity.this);
-					    		            
-					    		            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> regId2 = " + regId2);
-					    		             
-					    		        } else {
-					    		             
-					    		            // Device is already registered on GCM Server
-					    		            if (GCMRegistrar.isRegisteredOnServer(RegisterActivity.this)) {
-					    		                 
-					    		                // Skips registration.             
-					    		                Toast.makeText(getApplicationContext(),
-					    		                              "Already registered with GCM Server",
-					    		                              Toast.LENGTH_LONG).
-					    		                              show();
-					    		             
-					    		            } else {
-					    		                 
-					    		                // Try to register again, but not in the UI thread.
-					    		                // It's also necessary to cancel the thread onDestroy(),
-					    		                // hence the use of AsyncTask instead of a raw thread.
-					    		                 
-					    		            	user.setRegId(regId);
-					    		            	try {
-							    					if(connectionUtility.hasWifi(getBaseContext())){
-							    						saveUser(user);	    						
-							    					}
-							    					else{
-							    						connectionUtility.showToast(RegisterActivity.this);
-							    						connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
-							    							@Override
-							    							public void onInternetEnabled(boolean result) {
-							    								saveUser(user);
-							    							}
-							    							@Override
-							    							public void exitApplication(boolean result) {
-							    								onDestroy();
-							    								finish();				
-							    							}
-							    						});	
-							    					}
-							    		    	}
-												finally{											
-												}  
-					    		            	
-					    		                
-					    		            }
-					    		        }
-					    		      					    		              
+					    		        					    		    	
+					    		    	final UserDTO user = new UserDTO(userName,uid,countrySelected,nickName,password,favTeamId,"");					   		    	
+					    		    	try {
+					    					if(connectionUtility.hasWifi(getBaseContext())){
+					    						progressDialog = new ProgressDialog(RegisterActivity.this);
+					    						progressDialog.setMessage("Loading ...");
+					    						saveUser(user);	    						
+					    					}
+					    					else{
+					    						connectionUtility.showToast(RegisterActivity.this);
+					    						connectionUtility.setUtilityListener(new ConnectionUtilityListener()  {				
+					    							@Override
+					    							public void onInternetEnabled(boolean result) {
+					    								progressDialog = new ProgressDialog(RegisterActivity.this);
+					    								progressDialog.setMessage("Loading ...");
+					    								saveUser(user);
+					    							}
+					    							@Override
+					    							public void exitApplication(boolean result) {
+					    								onDestroy();
+					    								finish();				
+					    							}
+					    						});	
+					    					}
+					    		    	}
+										finally{											
+										}            
 					                }
+					            	}
 								}
-							});	
-				            
+							});					            
+					    	
 				            imageInfoUsr.setOnClickListener(new View.OnClickListener() { 
 				                public void onClick(View view) {
 				                	Toast toast = Toast.makeText(RegisterActivity.this,"Please enter your email address", Toast.LENGTH_LONG);
@@ -231,7 +193,6 @@ public class RegisterActivity extends Activity {
 						            finish();
 				                }
 				            });
-				            insertTeamList();
 				            getCountryList();
 				            getTeamList();
 	                    }
@@ -244,19 +205,6 @@ public class RegisterActivity extends Activity {
 	    // start thread
 	    thread.start();
 	}
-	
-	public void  test (){
-		CreateGameInfoTask createUserTask = new CreateGameInfoTask();
-        createUserTask.setContext(getApplicationContext());
-        createUserTask.execute();        
-        createUserTask.setCreateGameInfoTaskListener(new CreateGameInfoTaskListener() {
-
-			@Override
-			public void onComplete(GameDTO result) {
-				// TODO Auto-generated method stub
-				
-			}});
-	}
 
 	public void saveUser (final UserDTO user){
         CreateUserTask createUserTask = new CreateUserTask();
@@ -266,6 +214,7 @@ public class RegisterActivity extends Activity {
         createUserTask.setcreateUserTaskListener(new CreateUserTaskListener() {			
 			@Override
 			public void onComplete(String result) {
+				progressDialog.dismiss();
 				if (result != "") {   
                     if (result.equalsIgnoreCase("userCreated")) {				
 						System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> result" + result);
@@ -293,6 +242,7 @@ public class RegisterActivity extends Activity {
 			}
 		});
 	}	
+	
 	public void getCountryList(){
 		ArrayList<String> countries = new ArrayList<String>();
 		String[] isoCountries = Locale.getISOCountries();
@@ -328,71 +278,27 @@ public class RegisterActivity extends Activity {
         spinnerArrayAdapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );       
         favTeamList = (Spinner) findViewById( R.id.spinnerTeam);
         favTeamList.setAdapter(spinnerArrayAdapter);
-	}	
-	public void insertTeamList(){
-       // TeamService teamService = new TeamService();
-        //teamService.insertTeamsData(RegisterActivity.this);
 	}
-	
-	  // Create a broadcast receiver to get message and show on screen
-    private final BroadcastReceiver mHandleMessageReceiver = new BroadcastReceiver() {
-         
-        @Override
-        public void onReceive(Context context, Intent intent) {
-             
-            String newMessage = intent.getExtras().getString(Config.EXTRA_MESSAGE);
-             
-            // Waking up mobile if it is sleeping
-            acquireWakeLock(getApplicationContext());
-             
-            // Display message on the screen
-            //lblMessage.append(newMessage + "");        
-             
-            Toast.makeText(getApplicationContext(),
-                           "Got Message: " + newMessage,
-                           Toast.LENGTH_LONG).show();
-             
-            // Releasing wake lock
-            releaseWakeLock();
-        }
-    };
-    
-    private PowerManager.WakeLock wakeLock;
-    
-    public  void acquireWakeLock(Context context) {
-        if (wakeLock != null) wakeLock.release();
- 
-        PowerManager pm = (PowerManager)
-                          context.getSystemService(Context.POWER_SERVICE);
-         
-        wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK |
-                PowerManager.ACQUIRE_CAUSES_WAKEUP |
-                PowerManager.ON_AFTER_RELEASE, "WakeLock");
-         
-        wakeLock.acquire();
+    public final Pattern EMAIL_ADDRESS_PATTERN = Pattern.compile(
+            "[a-zA-Z0-9+._%-+]{1,256}" +
+            "@" +
+            "[a-zA-Z0-9][a-zA-Z0-9-]{0,64}" +
+            "(" +
+            "." +
+            "[a-zA-Z0-9][a-zA-Z0-9-]{0,25}" +
+            ")+"
+        );
+    private boolean checkEmail(String email) {
+       return EMAIL_ADDRESS_PATTERN.matcher(email).matches();
     }
- 
-    public  void releaseWakeLock() {
-        if (wakeLock != null) wakeLock.release(); wakeLock = null;
-    }
-    
-    @Override
-    protected void onDestroy() {
-        // Cancel AsyncTask
-        if (mRegisterTask != null) {
-            mRegisterTask.cancel(true);
+    boolean checkEmailCorrect(String Email) {
+        String pttn = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+        Pattern p = Pattern.compile(pttn);
+        Matcher m = p.matcher(Email);
+
+        if (m.matches()) {
+               return true;
         }
-        try {
-            // Unregister Broadcast Receiver
-            unregisterReceiver(mHandleMessageReceiver);
-             
-            //Clear internal resources.
-            GCMRegistrar.onDestroy(this);
-             
-        } catch (Exception e) {
-            Log.e("UnRegister Receiver Error",
-                      "> " + e.getMessage());
-        }
-        super.onDestroy();
-    }
+        return false;
+ }
 }

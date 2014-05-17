@@ -1,5 +1,6 @@
 package com.competition.worldcupv1.utils;
 
+import com.competition.worldcupv1.MainActivity;
 import com.competition.worldcupv1.R;
 
 import android.app.AlertDialog;
@@ -16,7 +17,7 @@ public class AlertDialogManager {
      *               - pass null if you don't want icon
      * */
     @SuppressWarnings("deprecation")
-	public void showAlertDialog(Context context, String title, String message,
+	public void showAlertDialog(final Context context, String title, String message,
             Boolean status) {
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
  
@@ -33,6 +34,8 @@ public class AlertDialogManager {
         // Setting OK Button
         alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+            	// Finish activity
+            	((MainActivity)context).finish();
             }
         });
  

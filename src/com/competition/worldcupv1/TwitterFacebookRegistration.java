@@ -56,7 +56,6 @@ public class TwitterFacebookRegistration extends Activity {
 				            favTeamList = (Spinner) findViewById( R.id.spinnerTeam);
 				            btnCompleteRegist = (Button) findViewById( R.id.btnCompleteRegist);
 				            btnCancelReg = (Button) findViewById( R.id.btnCancelReg);
-				            insertTeamList();
 				            getCountryList();
 				            getTeamList();
 				            
@@ -119,7 +118,7 @@ public class TwitterFacebookRegistration extends Activity {
 					    		    	  loginUserName = twitterUser.get(SessionManager.KEY_TWITTER_TOKEN);
 						    		      loginNickName = twitterUser.get(SessionManager.KEY_TWITTER_NICK);
 					    		      }					    		      
-					    		      final UserDTO user = new UserDTO(loginUserName,uid,countrySelected,loginNickName,"",favTeamId);					   		    	
+					    		      final UserDTO user = new UserDTO(loginUserName,uid,countrySelected,loginNickName,"",favTeamId,"");					   		    	
 					    		      try {
 					    		    	  if(connectionUtility.hasWifi(getBaseContext())){
 					    		    		  saveUser(user);	    						
@@ -191,10 +190,6 @@ public class TwitterFacebookRegistration extends Activity {
         favTeamList = (Spinner) findViewById( R.id.spinnerTeam);
         favTeamList.setAdapter(spinnerArrayAdapter);
 	}	
-	public void insertTeamList(){
-       // TeamService teamService = new TeamService();
-       // teamService.insertTeamsData(TwitterFacebookRegistration.this);
-	}
 
 	public void saveUser (final UserDTO user){
         CreateUserTask createUserTask = new CreateUserTask();

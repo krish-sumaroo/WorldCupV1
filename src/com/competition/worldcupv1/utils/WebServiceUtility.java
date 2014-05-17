@@ -48,7 +48,9 @@ public class WebServiceUtility {
 			httppost = new HttpPost(url);
 	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairsList));        	
 	        responseHandler = new BasicResponseHandler();
-	        responseBody = httpclient.execute(httppost, responseHandler);          
+	        responseBody = httpclient.execute(httppost, responseHandler);  
+	        
+	        //<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
 	        jObject = new JSONObject(responseBody);
 		}
 		finally{

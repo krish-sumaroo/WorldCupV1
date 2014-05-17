@@ -35,13 +35,14 @@ public class WebServiceHelper {
       
 		//String pwd = user.getPassword();
     	// Add data
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(6);
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(7);
         nameValuePairs.add(new BasicNameValuePair("username", user.getUserName()));
         nameValuePairs.add(new BasicNameValuePair("password", user.getPassword()));
         nameValuePairs.add(new BasicNameValuePair("nickname", user.getNickName()));
         nameValuePairs.add(new BasicNameValuePair("favTeam", String.valueOf(user.getFavTeam())));
         nameValuePairs.add(new BasicNameValuePair("uid", user.getUid()));
-        nameValuePairs.add(new BasicNameValuePair("country", user.getCountry()));       
+        nameValuePairs.add(new BasicNameValuePair("country", user.getCountry()));
+        nameValuePairs.add(new BasicNameValuePair("regisId", user.getRegId()));    
         
         //use the generic list fn to post JSON obj
 		WebServiceUtility webServiceUtility = new WebServiceUtility();
@@ -63,7 +64,7 @@ public class WebServiceHelper {
 		String result="";
       
     	// Add data
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(6);
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
         nameValuePairs.add(new BasicNameValuePair("username", user.getUserName()));
         nameValuePairs.add(new BasicNameValuePair("password", user.getPassword()));
         

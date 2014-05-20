@@ -14,14 +14,14 @@ android:layout_height="match_parent">
 android:id="@+id/pane1"
 android:layout_width="360dp"
 android:layout_height="match_parent"
-android:background="#CC00FF00" />
+ android:background="@drawable/background_1"  />
  
 <FrameLayout
 android:id="@+id/pane2"
 android:layout_width="400dp"
 android:layout_height="match_parent"
 android:layout_weight="1"
-android:background="#CC0000FF" />
+ android:background="@drawable/background_2" />
 </android.support.v4.widget.SlidingPaneLayout>
  
 <!-- More stuff not included-->

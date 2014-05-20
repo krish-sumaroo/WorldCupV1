@@ -3,38 +3,48 @@ package com.competition.worldcupv1.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.competition.worldcupv1.MainActivity;
 import com.competition.worldcupv1.R;
+import com.competition.worldcupv1.RegisterActivity;
 import com.competition.worldcupv1.dto.GameInfoDTO;
 import com.competition.worldcupv1.dto.Player;
 import com.competition.worldcupv1.dto.PlayerDTO;
 import com.competition.worldcupv1.service.GameService;
 import com.competition.worldcupv1.service.PlayerService;
 
+@SuppressLint("NewApi")
 public class TeamPlayersOneFrag extends Fragment {
 	
 	GameService gameService = new GameService();
 	PlayerService playerService = new PlayerService();
 	 View v ;
+	   private Button btnGoal;
 	
 	 @Override
 	 public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	 Bundle savedInstanceState) {
 	  
 	v = inflater.inflate(R.layout.team_player_one_fragment, container, false);	  
-	 v.setBackgroundColor(Color.parseColor("#D0F5A9"));
+	 v.setBackground(getResources().getDrawable(R.drawable.background_2));
 	  
 	 return v;
 	 }
@@ -62,7 +72,7 @@ public class TeamPlayersOneFrag extends Fragment {
 		        PlayerListAdapter adapter = new PlayerListAdapter(getActivity(), 
 		                R.layout.listview_item_row, playersList);
 
-             listView.setBackgroundResource(R.drawable.background);                 
+             listView.setBackgroundResource(R.drawable.background_1);                 
              listView.setAdapter(adapter);		           
 		        listView.setOnItemClickListener(new OnItemClickListener() { 
 		   
@@ -80,6 +90,17 @@ public class TeamPlayersOneFrag extends Fragment {
 		                Player player = (Player) listView.getItemAtPosition(position);
 		                
 		                System.out.println(">>>>>>>>>>>>>>>>>>>>> player id = " + player.playerId);
+		                
+		               btnGoal = (Button) dialog.findViewById(R.id.btnGoal);
+		               
+		               // Link to Register Screen
+		               btnGoal.setOnClickListener(new View.OnClickListener() {			 
+					    	public void onClick(View view) {
+					    		Toast toast = Toast.makeText(getActivity(),"Button Goal clicked", Toast.LENGTH_LONG);
+			            		toast.setGravity(Gravity.CENTER, 0, 0);
+			            		toast.show();
+					            }
+					    });
 		            
 		                // Set dialog title
 		              //  dialog.setTitle("Player Action");

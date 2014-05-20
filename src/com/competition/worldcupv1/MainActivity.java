@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.Settings.Secure;
 import android.telephony.TelephonyManager;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -37,6 +38,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.competition.worldcupv1.asynctasks.CheckUserNameTask;
@@ -96,13 +98,13 @@ public class MainActivity extends Activity {
     Button btnLoginTwitter;
     Button btnLoginFbk;
     private Button btnLogin;
-	private Button btnLinkToRegister;
+	private TextView btnLinkToRegister;
 	private EditText txtUserName;
 	private EditText txtPassword;
 	UserDTO userDto = null;
 	private CheckBox rememberMe;
 	private Thread thread;
-	private Button btnLostPwd;
+	private TextView btnLostPwd;
      
     // Shared Preferences
     private static SharedPreferences mSharedPreferences;
@@ -158,7 +160,7 @@ public class MainActivity extends Activity {
 		boolean isLoggedIn = session.isLoggedIn();
 		//if isloggged in go to list page directly
 		if(isLoggedIn){
-			Intent i = new Intent(getApplicationContext(), GameListActivity.class);
+			Intent i = new Intent(getApplicationContext(), MainContainerActivity.class);
             // Closing all the Activities
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);             
             // Add new Flag to start new Activity
@@ -276,7 +278,7 @@ public class MainActivity extends Activity {
 	            	}
 		     	}
 				if (isTwitterLoggedInAlready()) {
-					Intent gameList = new Intent(getApplicationContext(), GameListActivity.class);
+					Intent gameList = new Intent(getApplicationContext(), MainContainerActivity.class);
 					//Close all views before launching matchList
 					gameList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		            startActivity(gameList);
@@ -285,9 +287,11 @@ public class MainActivity extends Activity {
 				txtUserName = (EditText) findViewById(R.id.txt_username);
 			    txtPassword = (EditText) findViewById(R.id.txt_pwd);
 			    btnLogin = (Button) findViewById(R.id.btnLogin);
-			    btnLinkToRegister = (Button) findViewById(R.id.btnRegister);
+			    btnLinkToRegister = (TextView) findViewById(R.id.btnRegister);
+			    btnLinkToRegister.setMovementMethod(LinkMovementMethod.getInstance());
 			    rememberMe = (CheckBox) findViewById(R.id.chkRemeber);
-			    btnLostPwd = (Button) findViewById(R.id.btnLostPwd);
+			    btnLostPwd = (TextView) findViewById(R.id.btnLostPwd);
+			    btnLostPwd.setMovementMethod(LinkMovementMethod.getInstance());
 			        
 		        // Login button Click Event (normal)
 		        btnLogin.setOnClickListener(new View.OnClickListener() {		 
@@ -308,6 +312,8 @@ public class MainActivity extends Activity {
 		    					if(connectionUtility.hasWifi(getBaseContext())){		    						
 		    						progressDialog = new ProgressDialog(MainActivity.this);
 		    						progressDialog.setMessage("Loading ...");
+		    						
+		    						
 		    						login(user);
 		    					}
 		    					else{
@@ -545,7 +551,7 @@ public class MainActivity extends Activity {
 						userService.registerGCM(MainActivity.this);
 						
 						//progressDialog.dismiss();
-						Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
+						Intent matchList = new Intent(getApplicationContext(), MainContainerActivity.class);
 		                // Close all views before launching matchList
 		                matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		                startActivity(matchList);                
@@ -605,7 +611,7 @@ public class MainActivity extends Activity {
 							UserService userService = new UserService();
 							userService.registerGCM(MainActivity.this);
 							
-							Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
+							Intent matchList = new Intent(getApplicationContext(), MainContainerActivity.class);
 			                // Close all views before launching matchList
 			                matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			                startActivity(matchList);                
@@ -660,7 +666,7 @@ public class MainActivity extends Activity {
 						UserService userService = new UserService();
 						userService.registerGCM(MainActivity.this);
 						
-						Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
+						Intent matchList = new Intent(getApplicationContext(), MainContainerActivity.class);
 		                // Close all views before launching matchList
 		                matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		                startActivity(matchList);                

@@ -8,12 +8,12 @@
     <string name="title_activity_register">Register new Account</string>
     <string name="title_activity_match_list">MatchListActivity</string>
     <string name="title_activity_game_list">GameListActivity</string>
-    <string name="username">Username</string>
+    <string name="username">Email</string>
     <string name="pwd">Password</string>
-    <string name="remember">Remember me</string>
-    <string name="login">Login</string>
-    <string name="register">Register</string>
-    <string name="pwd_lost">Lost Password</string>
+    <string name="remember">Keep me signed in</string>
+    <string name="login">Sign in</string>
+    <string name="register">Register Now</string>
+    <string name="pwd_lost">Forgotten your password?</string>
     <string name="nick_name">Nickname</string>
     <string name="country">Your Country</string>
     <string name="fav_team">Favourite Team</string>
@@ -22,4 +22,38 @@
 	<string name="title_activity_complete_register">TwitterFacebookRegistration</string>
 	<string name="action_menu">Main menu</string>
 	<string name="action_menu_logout">Logout</string>
+	<string name="no_account">No account?</string>
+	<string name="confirm_pwd">Confirm Password</string>
+	
+	
+    <string name="title_activity_first">FirstActivity</string>
+	<string name="title_activity_complete_register">TwitterFacebookRegistration</string>
+	<string name="title_activity_side">SideMenu</string>
+	<string name="action_menu">Main menu</string>
+	<string name="action_menu_logout">Logout</string>
+	
+	<string name="drawer_open">Slider Menu Opened</string>
+    <string name="drawer_close">Slider Menu Closed</string>
+    
+        
+    <!-- Nav Drawer Menu Items -->
+    <string-array name="nav_drawer_items">
+        <item >Players</item>
+        <item >Statistics</item>
+        <item >Friends</item>
+        <item >Messages</item>
+        <item >Logout</item>
+    </string-array>
+    
+    <!-- Nav Drawer List Item Icons -->
+    <!-- Keep them in order as the titles are in -->
+    <array name="nav_drawer_icons">
+        <item>@drawable/ic_home</item>
+        <item>@drawable/ic_people</item>
+        <item>@drawable/ic_photos</item>
+        <item>@drawable/ic_communities</item>
+    </array>
+    
+    <!-- Content Description -->
+    <string name="desc_list_item_icon">Item Icon</string>
 </resources>

@@ -1,114 +1,142 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/background" >
+    android:background="@drawable/bkground" >
 
-    <TextView
-        android:id="@+id/txtViewUserN"
+    <!--
+         <Button
+        android:id="@+id/btnGoogle"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="28dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="36dp"
+        android:layout_toLeftOf="@+id/btnLostPwd"
+        android:background="@drawable/button_image_google" />
+    -->
+
+    <Button
+        android:id="@+id/btnFbk"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="145dp"
+        android:layout_height="28dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="32dp"
-        android:text="@string/username" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="152dp"
+        android:background="@drawable/fb" />
 
-    <EditText
-        android:id="@+id/txt_username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/txtViewUserN"
-        android:layout_alignBottom="@+id/txtViewUserN"
-        android:layout_alignParentRight="true"
-        android:ems="10" />
-
-    <TextView
-        android:id="@+id/textViewPwd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/txtViewUserN"
-        android:layout_below="@+id/txt_username"
-        android:layout_marginTop="37dp"
-        android:text="@string/pwd" />
-
-    <EditText
-        android:id="@+id/txt_pwd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textViewPwd"
-        android:layout_alignBottom="@+id/textViewPwd"
-        android:layout_alignLeft="@+id/txt_username"
-        android:inputType="textPassword" 
-        android:ems="10" />
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_above="@+id/btnLoginTwitter"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="39dp"
+        android:src="@drawable/logo" />
 
     <CheckBox
         android:id="@+id/chkRemeber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/txt_pwd"
-        android:layout_marginTop="38dp"
-        android:layout_toRightOf="@+id/txtViewUserN"
-        android:text="@string/remember" />
-
-    <Button
-        android:id="@+id/btnLogin"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="38dp"
-        android:layout_alignLeft="@+id/textViewPwd"
-        android:layout_below="@+id/chkRemeber"
-        android:layout_marginTop="17dp"
-        android:text="@string/login" />
-
-    <Button
-        android:id="@+id/btnRegister"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="38dp"
-        android:layout_alignLeft="@+id/txt_pwd"
+        android:layout_alignLeft="@+id/txt_username"
         android:layout_alignTop="@+id/btnLogin"
+        android:text="@string/remember"
+        android:textSize="12sp" 
+        android:textStyle="bold"/>
+
+    <View
+        android:id="@+id/view1"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="#0a2a0a" />
+
+    <TextView
+        android:id="@+id/btnLostPwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/txt_username"
+        android:layout_below="@+id/btnLogin"
+        android:layout_marginTop="14dp"
+        android:text="@string/pwd_lost" 
+        android:textColor="#000000" 
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/btnRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView1"
+        android:layout_toRightOf="@+id/textView1"
+        android:layout_marginLeft="5dp"
+        android:textColor="#f7cf09" 
+        android:textSize="13sp"
+        android:textStyle="bold"
         android:text="@string/register" />
 
-    <Button
-        android:id="@+id/btnLostPwd"
-        style="?android:attr/buttonStyleSmall"
+    <TextView
+        android:id="@+id/textView1"
         android:layout_width="wrap_content"
-        android:layout_height="38dp"
-        android:layout_alignLeft="@+id/btnLogin"
-        android:layout_below="@+id/btnLogin"
-        android:layout_marginTop="26dp"
-        android:text="@string/pwd_lost" />
-
-    <Button
-        android:id="@+id/btnFbk"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="68dp"
-        android:layout_height="28dp"
-        android:layout_alignLeft="@+id/btnLostPwd"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="40dp"
-        android:background="@drawable/button_image_fbk"
-        android:text="" />
+        android:layout_centerHorizontal="true"
+        android:text="@string/no_account"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="30dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/background_light"
+        android:textSize="13sp" />
 
     <Button
         android:id="@+id/btnLoginTwitter"
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
+        android:layout_width="145dp"
         android:layout_height="28dp"
         android:layout_alignBaseline="@+id/btnFbk"
         android:layout_alignBottom="@+id/btnFbk"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/button_image_twitter"
-        android:text="" />
+        android:layout_alignRight="@+id/btnLogin"
+        android:background="@drawable/twitter" />
+
+    <EditText
+        android:id="@+id/txt_pwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnFbk"
+        android:layout_alignRight="@+id/btnLogin"
+        android:layout_below="@+id/txt_username"
+        android:layout_marginTop="17dp"
+        android:background="@drawable/rounded_corner_edit"
+        android:ems="10"
+        android:hint="@string/pwd"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/txt_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnFbk"
+        android:layout_alignRight="@+id/txt_pwd"
+        android:layout_below="@+id/btnFbk"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/rounded_corner_edit"
+        android:ems="10"
+        android:hint="@string/username" >
+
+        <requestFocus />
+    </EditText>
 
     <Button
-        android:id="@+id/btnGoogle"
+        android:id="@+id/btnLogin"
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="28dp"
-        android:layout_alignBaseline="@+id/btnLoginTwitter"
-        android:layout_alignBottom="@+id/btnLoginTwitter"
+        android:layout_width="110dp"
+        android:layout_height="38dp"
         android:layout_alignParentRight="true"
-        android:background="@drawable/button_image_google" />
+        android:layout_below="@+id/txt_pwd"
+        android:layout_marginTop="24dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/signin" />
 
 </RelativeLayout>

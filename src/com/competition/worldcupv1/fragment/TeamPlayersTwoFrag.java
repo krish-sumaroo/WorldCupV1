@@ -8,6 +8,7 @@ import com.competition.worldcupv1.dto.GameInfoDTO;
 import com.competition.worldcupv1.dto.PlayerDTO;
 import com.competition.worldcupv1.dto.Player;
 import com.competition.worldcupv1.service.GameService;
+import com.competition.worldcupv1.service.PlayerService;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.widget.AdapterView.OnItemClickListener;
 public class TeamPlayersTwoFrag extends Fragment {
 	
 	GameService gameService = new GameService();
+	PlayerService playerService = new PlayerService();
 	
 	 @Override
 	 public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,7 +43,7 @@ public class TeamPlayersTwoFrag extends Fragment {
 		        super.onActivityCreated(savedInstanceState); 		           
 		        ListView listView = (ListView) getActivity().findViewById(R.id.listViewTeam2);
 		        GameInfoDTO currentGame = gameService.getGameInfoDTO(getActivity());
-		        List<PlayerDTO> listPlayers = gameService.getPlayers(getActivity(), currentGame.getTeam2Id());
+		        List<PlayerDTO> listPlayers = playerService.getPlayers(getActivity(), currentGame.getTeam2Id());
 		        
 		        ArrayList<Player> playersList = new ArrayList<Player>();
 		        if(listPlayers.size() >0){

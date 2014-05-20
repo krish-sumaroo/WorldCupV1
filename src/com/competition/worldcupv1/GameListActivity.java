@@ -11,16 +11,9 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SlidingPaneLayout;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.competition.worldcupv1.asynctasks.CreateGameInfoTask;
 import com.competition.worldcupv1.asynctasks.CreateGameInfoTask.CreateGameInfoTaskListener;
@@ -32,9 +25,10 @@ import com.competition.worldcupv1.dto.PlayerDTO;
 import com.competition.worldcupv1.fragment.TeamPlayersOneFrag;
 import com.competition.worldcupv1.fragment.TeamPlayersTwoFrag;
 import com.competition.worldcupv1.service.GameService;
+import com.competition.worldcupv1.service.PlayerService;
 import com.competition.worldcupv1.utils.ConnectionUtility;
-import com.competition.worldcupv1.utils.SessionManager;
 import com.competition.worldcupv1.utils.ConnectionUtility.ConnectionUtilityListener;
+import com.competition.worldcupv1.utils.SessionManager;
 import com.facebook.Session;
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.Facebook;
@@ -43,6 +37,7 @@ import com.facebook.android.Facebook;
 public class GameListActivity extends FragmentActivity   {
 	private SlidingPaneLayout mPane;
 	GameService gameService = new GameService();
+	PlayerService playerService = new PlayerService();
 	private static final int PLAYER_STATUS_INFO_FINAL = 3;
 	private static final int PLAYER_STATUS_INFO_NOT_FINAL = 2;
 	TextView txtTeam1Name;
@@ -158,7 +153,7 @@ public class GameListActivity extends FragmentActivity   {
 		populatePlayersTask.setCreatePlayerListTaskListener(new CreatePlayerListTaskListener() {
 			@Override
 			public void onComplete(List<PlayerDTO> result) {
-				gameService.insertPlayerData(getApplicationContext(),result);		
+				playerService.insertPlayerData(getApplicationContext(),result);		
 				
 				//display page players
 				 setContentView(R.layout.main_teamplayers_fragment);
@@ -188,7 +183,7 @@ public class GameListActivity extends FragmentActivity   {
 	}
 	
 	public int  verifyGamePlayerStatus (){
-		return gameService.getPlayerInfoStatus(getApplicationContext());
+		return playerService.getPlayerInfoStatus(getApplicationContext());
 	}
 	
 	public void  uponStatusDisplayPage (){

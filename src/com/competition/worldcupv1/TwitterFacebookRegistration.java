@@ -24,6 +24,7 @@ import com.competition.worldcupv1.asynctasks.CreateUserTask.CreateUserTaskListen
 import com.competition.worldcupv1.dto.TeamDTO;
 import com.competition.worldcupv1.dto.UserDTO;
 import com.competition.worldcupv1.service.TeamService;
+import com.competition.worldcupv1.service.UserService;
 import com.competition.worldcupv1.utils.ConnectionUtility;
 import com.competition.worldcupv1.utils.ConnectionUtility.ConnectionUtilityListener;
 import com.competition.worldcupv1.utils.SessionManager;
@@ -202,7 +203,12 @@ public class TwitterFacebookRegistration extends Activity {
 				if (result != "") {   
                     if (result.equalsIgnoreCase("userCreated")) {				
 						System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>> result" + result);
-						session.createLoginSession(user.getUserName(),user.getUid(),user.getNickName(),user.getFavTeam(),user.getCountry());	                       
+						session.createLoginSession(user.getUserName(),user.getUid(),user.getNickName(),user.getFavTeam(),user.getCountry());	
+						
+						//register GCM
+						UserService userService = new UserService();
+						userService.registerGCM(TwitterFacebookRegistration.this);
+												
 						Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
 		                // Close all views before launching matchList
 		                matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

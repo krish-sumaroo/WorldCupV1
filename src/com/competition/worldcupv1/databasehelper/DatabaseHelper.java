@@ -312,5 +312,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public void deleteTablePlayers() {
 		String deleteSQL = "DELETE FROM " + DB_TABLE_PLAYER;
 		db.execSQL(deleteSQL);	
+	}
+	
+	//update table game set status 3 - final
+	public void updateTableGame() {
+		String updateSQL = "UPDATE  " + DB_TABLE_GAME +" SET player_info_status=3";
+		db.execSQL(updateSQL);	
 	}	
 }

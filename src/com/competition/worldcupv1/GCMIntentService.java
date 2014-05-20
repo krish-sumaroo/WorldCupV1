@@ -12,6 +12,10 @@ import com.google.android.gcm.GCMBaseIntentService;
 
 public class GCMIntentService extends GCMBaseIntentService {
 	
+	private static String PLAYER_FINAL_LIST = "PLAYER FINAL LIST";
+	private static String GAME_OVER = "GAME OVER";
+	private static String MESSAGE = "MESSAGE";
+	
 	 public GCMIntentService() {
 		 // Call extended class Constructor GCMBaseIntentService
 		 super(Config.GOOGLE_SENDER_ID);
@@ -26,7 +30,22 @@ public class GCMIntentService extends GCMBaseIntentService {
 	protected void onMessage(Context arg0, Intent arg1) {	
 		Bundle msgJson = arg1.getExtras();
 		System.out.println(">>>>>>>>>>>>>>>>>> msgJson = " + msgJson);
-		String message = arg1.getExtras().getString("msg");       
+		String message = arg1.getExtras().getString("msg");   
+		
+//		/*
+//		// get push action
+//		Controller  controller = (Controller) getApplicationContext(); 
+//		String actionVal = msgJson.getString("action");
+//		if(actionVal.equalsIgnoreCase(PLAYER_FINAL_LIST)){
+//			controller.pushActionFinalPlayerList();
+//		}
+//		if(actionVal.equalsIgnoreCase(GAME_OVER)){
+//			controller.pushActionGameOver();
+//		}
+//		if(actionVal.equalsIgnoreCase(MESSAGE)){
+//			controller.pushActionMessage();
+//		}
+//		*/
 	        
 		Intent intent = new Intent(Config.DISPLAY_MESSAGE_ACTION);
 		intent.putExtra(Config.EXTRA_MESSAGE, arg1);
@@ -36,12 +55,13 @@ public class GCMIntentService extends GCMBaseIntentService {
 	}
 
 	@Override
-	protected void onRegistered(Context arg0, String registrationId) {
+	protected void onRegistered(Context context, String registrationId) {
 		//Get Global Controller Class object (see application tag in AndroidManifest.xml)
-        Log.i(TAG, "Device registered: regId = " + registrationId);
-        System.out.println(">>>>>>>>>>>>>>>>>> registrationId = " + registrationId);
-        Controller  aController = (Controller) getApplicationContext();        
-        //aController.regId(arg0);
+       Log.i(TAG, "Device registered: regId = " + registrationId);
+       System.out.println(">>>>>>>>>>>>>>>>>> registrationId = " + registrationId);
+       Controller  controller = (Controller) getApplicationContext();        
+       String uid = controller.getUID();
+       controller.registerGCM(uid, registrationId, context);
 	}
 
 	@Override

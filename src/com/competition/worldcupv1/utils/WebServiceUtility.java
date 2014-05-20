@@ -19,7 +19,6 @@ public class WebServiceUtility {
 	private static final String webServiceURL = "http://54.85.111.97/wc/master/index.php/";
 	
 	public JSONObject  extractList(String listUrl) throws ClientProtocolException, IOException, JSONException {
-		JSONArray jArray = null;
 		JSONObject object = null;
 		String url = webServiceURL+listUrl;
 		HttpClient httpclient = new DefaultHttpClient();
@@ -27,9 +26,11 @@ public class WebServiceUtility {
 			HttpPost httppost = new HttpPost(url);
 	        ResponseHandler<String> responseHandler = new BasicResponseHandler();
 	        String responseBody = httpclient.execute(httppost, responseHandler);
-	        object = new JSONObject(responseBody);
-	       // jArray = new JSONArray(responseBody);
-			}
+	        if(!responseBody.equalsIgnoreCase("")){	 
+	        	object = new JSONObject(responseBody);
+	        	// jArray = new JSONArray(responseBody);
+	        }
+		}
 		finally{
         	httpclient.getConnectionManager().shutdown();
         }
@@ -50,8 +51,9 @@ public class WebServiceUtility {
 	        responseHandler = new BasicResponseHandler();
 	        responseBody = httpclient.execute(httppost, responseHandler);  
 	        
-	        //<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
-	        jObject = new JSONObject(responseBody);
+	        if(!responseBody.equalsIgnoreCase("")){	       
+	        	jObject = new JSONObject(responseBody);
+	        }
 		}
 		finally{
         	httpclient.getConnectionManager().shutdown();

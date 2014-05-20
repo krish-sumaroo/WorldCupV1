@@ -1,18 +1,38 @@
 package com.competition.worldcupv1.asynctasks;
 
+import java.io.IOException;
+
+import org.apache.http.client.ClientProtocolException;
+import org.json.JSONException;
+
 import android.content.Context;
 import android.os.AsyncTask;
 
 import com.competition.worldcupv1.service.GameService;
+import com.competition.worldcupv1.service.UserService;
+import com.competition.worldcupv1.webServicehelper.WebServiceHelper;
 
 public class GetRegistrationIdTask extends AsyncTask<Void, Void, Void>{
 	private Context context;
 	GetRegistrationIdTaskListener getRegistrationIdTaskListener;
-	GameService gameService = new GameService();
+	private String uid;
+	private String regisId;
+	WebServiceHelper serviceHelper = new WebServiceHelper();
 	
 	@Override
 	protected Void doInBackground(Void... params) {
-		gameService.registerId(context);
+		try {
+			serviceHelper.regisisterGCM(uid, regisId, context);
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 		
 	}
@@ -36,6 +56,22 @@ public class GetRegistrationIdTask extends AsyncTask<Void, Void, Void>{
 	public void setGetRegistrationIdTaskListener(
 			GetRegistrationIdTaskListener getRegistrationIdTaskListener) {
 		this.getRegistrationIdTaskListener = getRegistrationIdTaskListener;
+	}
+
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
+
+	public String getRegisId() {
+		return regisId;
+	}
+
+	public void setRegisId(String regisId) {
+		this.regisId = regisId;
 	}
 
 }

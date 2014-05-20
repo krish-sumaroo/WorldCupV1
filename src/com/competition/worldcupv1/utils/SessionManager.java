@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.competition.worldcupv1.GameListActivity;
 import com.competition.worldcupv1.MainActivity;
+import com.competition.worldcupv1.MainContainerActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -126,7 +127,7 @@ public class SessionManager {
         }
         
         else{
-        	Intent i = new Intent(_context, GameListActivity.class);
+        	Intent i = new Intent(_context, MainContainerActivity.class);
             // Closing all the Activities
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);             
             // Add new Flag to start new Activity

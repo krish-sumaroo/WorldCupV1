@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -21,6 +22,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -37,6 +39,7 @@ import com.competition.worldcupv1.asynctasks.CreateUserTask.CreateUserTaskListen
 import com.competition.worldcupv1.asynctasks.GetRegistrationIdTask;
 import com.competition.worldcupv1.asynctasks.GetRegistrationIdTask.GetRegistrationIdTaskListener;
 import com.competition.worldcupv1.dto.GameDTO;
+import com.competition.worldcupv1.dto.Player;
 import com.competition.worldcupv1.dto.TeamDTO;
 import com.competition.worldcupv1.dto.UserDTO;
 import com.competition.worldcupv1.service.TeamService;
@@ -63,6 +66,7 @@ public class RegisterActivity extends Activity {
     ImageView imageInfoUsr;
     ImageView imageInfoCountry;
     ImageView imageInfoTeam;
+	private EditText txtConfirmPwd;
     
     // Asyntask
     AsyncTask<Void, Void, Void> mRegisterTask;
@@ -89,7 +93,8 @@ public class RegisterActivity extends Activity {
 				            txtPassword = (EditText) findViewById( R.id.editTextPwd);
 				            imageInfoUsr = (ImageView) findViewById( R.id.imageInfoUsr);
 				            imageInfoCountry = (ImageView) findViewById( R.id.imageInfoCountry);
-				            imageInfoTeam = (ImageView) findViewById( R.id.imageInfoTeam);				            
+				            imageInfoTeam = (ImageView) findViewById( R.id.imageInfoTeam);					          
+				            txtConfirmPwd = (EditText) findViewById( R.id.editTextConfirmPwd);
 				            
 				            btnRegisterUser.setOnClickListener(new OnClickListener() {	
 								@SuppressWarnings("unused")
@@ -98,7 +103,7 @@ public class RegisterActivity extends Activity {
 									String country = countryList.getSelectedItem().toString();
 					            	String favTeam = favTeamList.getSelectedItem().toString();
 					            	final ConnectionUtility connectionUtility = new ConnectionUtility();
-					            	if(( txtUserName.length() == 0 || txtUserName.equals("") || txtUserName == null) || (txtNickName.length() == 0 || txtNickName.equals("") || txtNickName == null) || (txtPassword.length() == 0 || txtPassword.equals("") || txtPassword == null) || (country.equalsIgnoreCase("Country")) || (favTeam.equalsIgnoreCase("Team")))
+					            	if(( txtUserName.length() == 0 || txtUserName.equals("") || txtUserName == null) || (txtNickName.length() == 0 || txtNickName.equals("") || txtNickName == null) || (txtPassword.length() == 0 || txtPassword.equals("") || txtPassword == null) || (country.equalsIgnoreCase("Country")) || (favTeam.equalsIgnoreCase("Team")) || (txtConfirmPwd.length() == 0 || txtConfirmPwd.equals("") || txtConfirmPwd == null) )
 					                {    		    	 
 					            		Toast toast = Toast.makeText(RegisterActivity.this,"Please fill in all the fields", Toast.LENGTH_LONG);
 					            		toast.setGravity(Gravity.CENTER, 0, 0);
@@ -106,18 +111,25 @@ public class RegisterActivity extends Activity {
 					                }
 					            	else{
 					            		final String userName = txtUserName.getText().toString();
+					            		final String nickName = txtNickName.getText().toString();
+					                	final String password = txtPassword.getText().toString();
+					                	final String countrySelected = countryList.getSelectedItem().toString();
+					                	final String confirmPassword = txtConfirmPwd.getText().toString();
 					            		
+					            		//check format email
 					                    if(!checkEmailCorrect(userName)){
 					                    	Toast toast = Toast.makeText(RegisterActivity.this,"Invalid Email Addresss", Toast.LENGTH_LONG);
 					                    	toast.setGravity(Gravity.CENTER, 0, 0);
 					                    	toast.show();
 					                    }
+					                    //check confirm pwd
+					                    else if(!confirmPassword.equalsIgnoreCase(password)){
+					                    	Toast toast = Toast.makeText(RegisterActivity.this,"The confirm password is not identical", Toast.LENGTH_LONG);
+					                    	toast.setGravity(Gravity.CENTER, 0, 0);
+					                    	toast.show();
+					                    }
 					                    else
 					                    {
-					                	
-					                	final String nickName = txtNickName.getText().toString();
-					                	final String password = txtPassword.getText().toString();
-					                	final String countrySelected = countryList.getSelectedItem().toString();
 					                	TeamDTO teamSelected = (TeamDTO) ( (Spinner) findViewById(R.id.spinnerTeam) ).getSelectedItem();
 					                	final long favTeamId = teamSelected.getTeamId();					                    
 					                    System.out.println(">>>>>>>>>>>>>>>>>>>>>>> teamSelected = " + teamSelected.getTeamId());					                	
@@ -184,7 +196,7 @@ public class RegisterActivity extends Activity {
 				            		toast.show();
 				                }
 				            });
-				        	
+				      				        	
 				            // Link to Login Screen
 				            btnLinkToLogin.setOnClickListener(new View.OnClickListener() { 
 				                public void onClick(View view) {
@@ -225,7 +237,7 @@ public class RegisterActivity extends Activity {
 						UserService userService = new UserService();
 						userService.registerGCM(RegisterActivity.this);
 						
-						Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
+						Intent matchList = new Intent(getApplicationContext(), MainContainerActivity.class);
 		                // Close all views before launching matchList
 		                matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		                startActivity(matchList);                
@@ -265,7 +277,8 @@ public class RegisterActivity extends Activity {
         countriesSorted.addAll(countries);
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
         		RegisterActivity.this, android.R.layout.simple_spinner_item, countriesSorted);
-        spinnerArrayAdapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );  
+        spinnerArrayAdapter.setDropDownViewResource( android.R.layout.select_dialog_singlechoice );  
+        //dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         countryList = (Spinner) findViewById( R.id.spinnerCountry);
         countryList.setAdapter(spinnerArrayAdapter);
 	}

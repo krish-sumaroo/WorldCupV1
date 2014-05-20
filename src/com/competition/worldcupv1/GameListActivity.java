@@ -160,10 +160,10 @@ public class GameListActivity extends FragmentActivity   {
 				 mPane = (SlidingPaneLayout) findViewById(R.id.pane);		 
 				 mPane.openPane();
 				  
-				 getSupportFragmentManager().beginTransaction()
-				 .add(R.id.pane1, new TeamPlayersOneFrag(), "pane1").commit();
-				 getSupportFragmentManager().beginTransaction()
-				 .add(R.id.pane2, new TeamPlayersTwoFrag(), "pane2").commit();
+//				 getSupportFragmentManager().beginTransaction()
+//				 .add(R.id.pane1, new TeamPlayersOneFrag(), "pane1").commit();
+//				 getSupportFragmentManager().beginTransaction()
+//				 .add(R.id.pane2, new TeamPlayersTwoFrag(), "pane2").commit();
 			}});	
 		}
 
@@ -285,10 +285,10 @@ public class GameListActivity extends FragmentActivity   {
 				 mPane = (SlidingPaneLayout) findViewById(R.id.pane);		 
 				 mPane.openPane();
 				  
-				 getSupportFragmentManager().beginTransaction()
-				 .add(R.id.pane1, new TeamPlayersOneFrag(), "pane1").commit();
-				 getSupportFragmentManager().beginTransaction()
-				 .add(R.id.pane2, new TeamPlayersTwoFrag(), "pane2").commit();
+//				 getSupportFragmentManager().beginTransaction()
+//				 .add(R.id.pane1, new TeamPlayersOneFrag(), "pane1").commit();
+//				 getSupportFragmentManager().beginTransaction()
+//				 .add(R.id.pane2, new TeamPlayersTwoFrag(), "pane2").commit();
 			}	
 			else{
 				
@@ -296,11 +296,11 @@ public class GameListActivity extends FragmentActivity   {
 				 setContentView(R.layout.main_teamplayers_fragment);
 				 mPane = (SlidingPaneLayout) findViewById(R.id.pane);		 
 				 mPane.openPane();
-				  
-				 getSupportFragmentManager().beginTransaction()
-				 .add(R.id.pane1, new TeamPlayersOneFrag(), "pane1").commit();
-				 getSupportFragmentManager().beginTransaction()
-				 .add(R.id.pane2, new TeamPlayersTwoFrag(), "pane2").commit();
+//				  
+//				 getSupportFragmentManager().beginTransaction()
+//				 .add(R.id.pane1, new TeamPlayersOneFrag(), "pane1").commit();
+//				 getSupportFragmentManager().beginTransaction()
+//				 .add(R.id.pane2, new TeamPlayersTwoFrag(), "pane2").commit();
 			}
 
 		}

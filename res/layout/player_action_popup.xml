@@ -1,97 +1,213 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="350dp"
-    android:layout_height="fill_parent" >
+    android:layout_width="fill_parent"
+    android:layout_height="400dp" >
 
-    <TextView
-        android:id="@+id/txtScoreTeam1"
+    <View
+        android:id="@+id/view1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/btnGoal"
+        android:layout_height="125dp"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="18dp"
-        android:layout_marginTop="27dp"
-        android:text="Team1" />
+        android:background="#f7fe2e" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/txtScoreTeam1"
-        android:layout_alignBottom="@+id/txtScoreTeam1"
-        android:layout_toRightOf="@+id/btnGoal"
-        android:text="VS"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Match Score"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <EditText
-        android:id="@+id/editScore1"
-        android:layout_width="40dp"
+    <TextView
+        android:id="@+id/txtScoreTeam1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/txtScoreTeam1"
+        android:layout_alignBaseline="@+id/txtScoreTeam2"
+        android:layout_alignBottom="@+id/txtScoreTeam2"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="5dp"
+        android:text="BRA"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/view1"
         android:layout_below="@+id/textView2"
-        android:ems="10"
-        android:inputType="number" />
-
-    <EditText
-        android:id="@+id/editScore2"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/txtScoreTeam2"
-        android:layout_below="@+id/txtScoreTeam2"
-        android:ems="10"
-        android:inputType="number" />
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/txtScoreTeam1" />
 
     <ImageView
-        android:id="@+id/btnGoal"
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/view1"
+        android:src="@drawable/player_popup" />
+
+    <View
+        android:id="@+id/view2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/editScore1"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="24dp"
-        android:src="@drawable/goal" />
+        android:layout_below="@+id/imageView1"
+        android:background="#99CC66" />
+
+    <ImageView
+        android:id="@+id/btnGoal"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/view2"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/icon_goal" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/view2"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="18dp"
+        android:layout_toRightOf="@+id/btnGoal"
+        android:text="Scores Next" />
+
+    <View
+        android:id="@+id/View01"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/btnGoal"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#000" />
 
     <ImageView
         android:id="@+id/btnRedCard"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/View01"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/icon_cards" />
+
+    <TextView
+        android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/btnGoal"
-        android:layout_below="@+id/btnYelloCard"
-        android:layout_marginTop="28dp"
-        android:src="@drawable/redcard" />
+        android:layout_alignTop="@+id/btnRedCard"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/btnRedCard"
+        android:text="Gets subs" />
+
+    <View
+        android:id="@+id/View02"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/btnRedCard"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#000" />
+
+    <ImageView
+        android:id="@+id/btnSubstitute"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/View02"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/icon_subsitute" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/View02"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="18dp"
+        android:layout_toRightOf="@+id/btnSubstitute"
+        android:text="Gets card" />
+
+    <Button
+        android:id="@+id/btnRegisterCancel"
+        android:layout_width="90dp"
+        android:layout_height="30dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/btnSubstitute"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/cancel" />
 
     <Button
         android:id="@+id/btnAddScore"
+        android:layout_width="90dp"
+        android:layout_height="30dp"
+        android:layout_alignBaseline="@+id/btnRegisterCancel"
+        android:layout_alignBottom="@+id/btnRegisterCancel"
+        android:layout_toRightOf="@+id/btnRegisterCancel"
+        android:background="@drawable/save" />
+
+    <TextView
+        android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnSubstitute"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="22dp"
-        android:text="Add prediction" />
+        android:layout_alignBottom="@+id/spinner1"
+        android:layout_alignTop="@+id/txtScoreTeam1"
+        android:layout_toLeftOf="@+id/spinner2"
+        android:layout_toRightOf="@+id/spinner1"
+        android:text=":"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Spinner
+        android:id="@+id/spinner2"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/view1"
+        android:layout_alignTop="@+id/spinner1"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_toLeftOf="@+id/txtScoreTeam2" />
 
     <TextView
         android:id="@+id/txtScoreTeam2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView2"
-        android:layout_toRightOf="@+id/btnAddScore"
-        android:text="Team2" />
+        android:layout_alignRight="@+id/View01"
+        android:layout_alignTop="@+id/spinner2"
+        android:layout_marginTop="25dp"
+        android:text="ARG"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ImageView
-        android:id="@+id/btnSubstitute"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/btnRedCard"
-        android:layout_marginLeft="41dp"
-        android:layout_toRightOf="@+id/textView2"
-        android:src="@drawable/substitute" />
+        android:id="@+id/imageView2"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignLeft="@+id/btnRegisterCancel"
+        android:layout_alignTop="@+id/imageView1"
+        android:layout_marginTop="12dp"
+        android:src="@drawable/tshirt" />
 
-    <ImageView
-        android:id="@+id/btnYelloCard"
+    <TextView
+        android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/btnGoal"
-        android:layout_alignRight="@+id/btnSubstitute"
-        android:src="@drawable/yellowcard" />
+        android:layout_alignTop="@+id/imageView2"
+        android:layout_marginTop="2dp"
+        android:layout_toRightOf="@+id/textView3"
+        android:text="Swarez"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>

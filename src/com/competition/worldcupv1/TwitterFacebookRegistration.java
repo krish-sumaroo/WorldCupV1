@@ -209,7 +209,7 @@ public class TwitterFacebookRegistration extends Activity {
 						UserService userService = new UserService();
 						userService.registerGCM(TwitterFacebookRegistration.this);
 												
-						Intent matchList = new Intent(getApplicationContext(), GameListActivity.class);
+						Intent matchList = new Intent(getApplicationContext(), MainContainerActivity.class);
 		                // Close all views before launching matchList
 		                matchList.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		                startActivity(matchList);                

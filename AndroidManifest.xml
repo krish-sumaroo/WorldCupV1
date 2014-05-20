@@ -71,7 +71,13 @@
         <activity
             android:name="com.competition.worldcupv1.TwitterFacebookRegistration"
             android:label="@string/title_activity_complete_register" >
-        </activity>   
+        </activity>  
+         
+          <activity
+            android:name="com.competition.worldcupv1.MainContainerActivity"
+            android:label="@string/title_activity_side" >
+        </activity> 
+        
         
         <receiver
             android:name="com.google.android.gcm.GCMBroadcastReceiver"

@@ -10,9 +10,10 @@ import com.competition.worldcupv1.dto.Player;
 import com.competition.worldcupv1.service.GameService;
 import com.competition.worldcupv1.service.PlayerService;
 
+import android.annotation.SuppressLint;
+import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
+@SuppressLint("NewApi")
 public class TeamPlayersTwoFrag extends Fragment {
 	
 	GameService gameService = new GameService();
@@ -31,7 +33,7 @@ public class TeamPlayersTwoFrag extends Fragment {
 	 Bundle savedInstanceState) {
 	  
 	 View v = inflater.inflate(R.layout.team_player_two_fragment, container, false);	  
-	 v.setBackgroundColor(Color.parseColor("#5ca028"));
+	 v.setBackground(getResources().getDrawable(R.drawable.background_2));
 	 TextView tv = (TextView)v.findViewById(R.id.txtTeamName2);
 	 tv.setText("Spain");	  
 	 return v;
@@ -56,7 +58,7 @@ public class TeamPlayersTwoFrag extends Fragment {
 			        PlayerListAdapter adapter = new PlayerListAdapter(getActivity(), 
 			                R.layout.listview_item_row, playersList);
 
-	             listView.setBackgroundResource(R.drawable.background);                 
+	             listView.setBackgroundResource(R.drawable.background_2);                 
 	             listView.setAdapter(adapter);		           
 			        listView.setOnItemClickListener(new OnItemClickListener() { 
 			   

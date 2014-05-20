@@ -15,9 +15,11 @@ import android.content.Context;
 import android.util.Log;
 
 import com.competition.worldcupv1.dto.GameDTO;
+import com.competition.worldcupv1.dto.PlayerActionDTO;
 import com.competition.worldcupv1.dto.PlayerDTO;
 import com.competition.worldcupv1.dto.TeamDTO;
 import com.competition.worldcupv1.dto.UserDTO;
+import com.competition.worldcupv1.dto.ScorePredictionDTO;
 import com.competition.worldcupv1.utils.WebServiceUtility;
 
 public class WebServiceHelper {	
@@ -94,7 +96,7 @@ public class WebServiceHelper {
         //use the generic list fn to post JSON obj
 		WebServiceUtility webServiceUtility = new WebServiceUtility();
 		JSONObject jObject = webServiceUtility.postData(nameValuePairs, url);			
-		System.out.println(">>>>>>>>>>>>>>> result login = " +jObject.getString("status") );
+		System.out.println(">>>>>>>>>>>>>>> result check UserName = " +jObject.getString("status") );
 		
         if(jObject.getString("status").equals("true")){  	
         	result= "userNameNotExist";
@@ -214,7 +216,7 @@ public class WebServiceHelper {
         //use the generic list fn to post JSON obj
 		WebServiceUtility webServiceUtility = new WebServiceUtility();
 		JSONObject jObject = webServiceUtility.postData(nameValuePairs, url);			
-		System.out.println(">>>>>>>>>>>>>>> result login = " +jObject.getString("status") );
+		System.out.println(">>>>>>>>>>>>>>> result lost pwd = " +jObject.getString("status") );
 		
         if(jObject.getString("status").equals("true")){  	
         	result= "emailSend";
@@ -238,5 +240,63 @@ public class WebServiceHelper {
 		WebServiceUtility webServiceUtility = new WebServiceUtility();
 		webServiceUtility.postData(nameValuePairs, url);			
             
+	}
+	
+	//Add score prediction
+	public String addPrediction(Context context, ScorePredictionDTO scorePrediction) throws ClientProtocolException, IOException, JSONException{
+		String url = "users/predictScore/";
+		String result="";
+      
+    	// Add data
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(6);
+        nameValuePairs.add(new BasicNameValuePair("uid",scorePrediction.getUid()));
+        nameValuePairs.add(new BasicNameValuePair("username", scorePrediction.getUserLogin()));
+        nameValuePairs.add(new BasicNameValuePair("gameId", String.valueOf(scorePrediction.getGameId())));
+        nameValuePairs.add(new BasicNameValuePair("team1Score", String.valueOf(scorePrediction.getTeam1Score())));
+        nameValuePairs.add(new BasicNameValuePair("team2Score", String.valueOf(scorePrediction.getTeam2Score())));
+        nameValuePairs.add(new BasicNameValuePair("userId", String.valueOf(scorePrediction.getUserId())));
+        
+        //use the generic list fn to post JSON obj
+		WebServiceUtility webServiceUtility = new WebServiceUtility();
+		JSONObject jObject = webServiceUtility.postData(nameValuePairs, url);
+		
+		System.out.println(">>>>>>>>>>>>>>> result add prediction = " +jObject.getString("status") );
+		
+        if(jObject.getString("status").equals("true")){  	
+        	result= "predictionSuccess";
+        }else{
+        	Log.d("status:","false");
+        	result= "predictionFailed";
+        }
+		return result;
+	}
+	
+	//Add player actions
+	public String addPlayerAction(Context context, PlayerActionDTO playerAction) throws ClientProtocolException, IOException, JSONException{
+		String url = "users/playerAction/";
+		String result="";
+      
+    	// Add data
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(6);
+        nameValuePairs.add(new BasicNameValuePair("uid",playerAction.getUid()));
+        nameValuePairs.add(new BasicNameValuePair("login", playerAction.getUserLogin()));
+        nameValuePairs.add(new BasicNameValuePair("gameId", String.valueOf(playerAction.getGameId())));
+        nameValuePairs.add(new BasicNameValuePair("playerId", String.valueOf(playerAction.getPlayerId())));
+        nameValuePairs.add(new BasicNameValuePair("actionId", String.valueOf(playerAction.getActionId())));
+        nameValuePairs.add(new BasicNameValuePair("userId", String.valueOf(playerAction.getUserId())));
+        
+        //use the generic list fn to post JSON obj
+		WebServiceUtility webServiceUtility = new WebServiceUtility();
+		JSONObject jObject = webServiceUtility.postData(nameValuePairs, url);
+		
+		System.out.println(">>>>>>>>>>>>>>> result add player actions = " +jObject.getString("status") );
+		
+        if(jObject.getString("status").equals("true")){  	
+        	result= "playerActionSuccess";
+        }else{
+        	Log.d("status:","false");
+        	result= "playerActionFailed";
+        }
+		return result;
 	}
 }
